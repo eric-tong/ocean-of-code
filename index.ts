@@ -1,6 +1,7 @@
 import { executeAction, parseActionsFromString } from "./action";
 import { getCoords, getMap } from "./map";
 
+import { MAX_CHARGE } from "./constants";
 import { decideActions } from "./decider";
 import { getData } from "./data";
 import { getErrors } from "./errors";
@@ -21,6 +22,7 @@ const startPosition = getStartPosition(map);
 console.log(`${startPosition.x} ${startPosition.y}`);
 
 const visited = new Set<Cell>();
+const charges = { TORPEDO: 0 };
 
 while (true) {
   const data = getData();
@@ -38,13 +40,31 @@ while (true) {
     errors: getErrors(direction, params)
   }));
   const actions = decideActions(directionErrors);
-  if (actions.find(({ type }) => type === "SURFACE")) visited.clear();
 
   console.error(
     "OppCells",
     Array.from(oppCells).map(cell => getCoords(cell)),
-    directionErrors
+    directionErrors,
+    charges
   );
 
+  actions.forEach(updateCounts);
   actions.forEach(executeAction);
+}
+
+function updateCounts(action: Action) {
+  switch (action.type) {
+    case "SURFACE":
+      visited.clear();
+      break;
+    case "MOVE":
+      if (action.charge) {
+        const chargeAmount = Math.min(MAX_CHARGE, charges[action.charge] + 1);
+        charges[action.charge] = chargeAmount;
+      }
+      break;
+    case "TORPEDO":
+      charges.TORPEDO = 0;
+      break;
+  }
 }

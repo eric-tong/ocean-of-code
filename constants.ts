@@ -18,3 +18,4 @@ declare global {
 
 export const DIRECTIONS: Direction[] = ["N", "E", "S", "W"];
 export const TORPEDO_RANGE = 4;
+export const MAX_CHARGE = 3;
