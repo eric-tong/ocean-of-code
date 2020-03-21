@@ -13,8 +13,6 @@ export function decideActions(
   } else {
     actions.push({ type: "SURFACE" });
   }
-
-  console.error(directionErrors);
   return actions;
 }
 
@@ -29,6 +27,7 @@ function getMinErrorDirection(
   } of directionErrors) {
     const error = mse;
     if (error < minError) {
+      minError = error;
       minErrorDirection = direction;
     }
   }

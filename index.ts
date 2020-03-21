@@ -31,11 +31,6 @@ while (true) {
   const oppActions = parseActionsFromString(data.oppOrders, map);
   oppActions.forEach(action => updatePossibleCells(oppCells, action));
 
-  console.error(
-    "OppCells",
-    Array.from(oppCells).map(cell => getCoords(cell))
-  );
-
   const validDirections = getValidDirections(myCell, visited);
   const params = { myCell, oppCells };
   const directionErrors = validDirections.map(direction => ({
@@ -44,5 +39,12 @@ while (true) {
   }));
   const actions = decideActions(directionErrors);
   if (actions.find(({ type }) => type === "SURFACE")) visited.clear();
+
+  console.error(
+    "OppCells",
+    Array.from(oppCells).map(cell => getCoords(cell)),
+    directionErrors
+  );
+
   actions.forEach(executeAction);
 }
