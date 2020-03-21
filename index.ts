@@ -3,6 +3,7 @@ import { getCoords, getMap } from "./map";
 
 import { decideActions } from "./decider";
 import { getData } from "./data";
+import { getErrors } from "./errors";
 import { getOppCells } from "./opponent";
 import { getStartPosition } from "./start-position";
 import { getValidDirections } from "./direction";
@@ -36,7 +37,12 @@ while (true) {
   );
 
   const validDirections = getValidDirections(myCell, visited);
-  const actions = decideActions({ myCell, oppCells, validDirections });
+  const params = { myCell, oppCells };
+  const directionErrors = validDirections.map(direction => ({
+    direction,
+    errors: getErrors(direction, params)
+  }));
+  const actions = decideActions(directionErrors);
   if (actions.find(({ type }) => type === "SURFACE")) visited.clear();
   actions.forEach(executeAction);
 }

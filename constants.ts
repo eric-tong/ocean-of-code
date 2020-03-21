@@ -13,6 +13,7 @@ declare global {
       }
     | { type: "TORPEDO"; cell: Cell }
     | { type: "SURFACE"; sector?: number };
+  type Errors = { mse: number };
 }
 
 export const DIRECTIONS: Direction[] = ["N", "E", "S", "W"];
