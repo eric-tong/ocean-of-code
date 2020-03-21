@@ -89,7 +89,7 @@ function parseActionFromString(
       // TODO Handle sonar
       return;
     case "SILENCE":
-      // TODO Handle silence
+      return { type };
       return;
     case "NA":
       return;

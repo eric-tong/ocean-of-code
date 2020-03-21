@@ -1,4 +1,4 @@
-import { DIRECTIONS, TORPEDO_RANGE } from "./constants";
+import { DIRECTIONS, SILENCE_RANGE, TORPEDO_RANGE } from "./constants";
 
 import { getCellsInSector } from "./sectors";
 import { getCellsWithinRange } from "./cell-utils";
@@ -33,7 +33,27 @@ export function updatePossibleCells(
       oldCells.forEach(cell => {
         if (cellsInSector.has(cell)) newCells.push(cell);
       });
-      return;
+      break;
+    case "SILENCE":
+      oldCells.forEach(origin => {
+        newCells.push(origin);
+        for (
+          let directionIndex = 0;
+          directionIndex < DIRECTIONS.length;
+          directionIndex++
+        ) {
+          let cell = origin;
+          for (let distance = 1; distance < SILENCE_RANGE; distance++) {
+            const newCell = cell[directionIndex];
+            if (newCell) {
+              newCells.push(newCell);
+            } else {
+              break;
+            }
+          }
+        }
+      });
+      break;
     default:
       console.error(action);
       throw new Error("Invalid action to update possible cells");

@@ -12,7 +12,8 @@ declare global {
         charge?: Device;
       }
     | { type: "TORPEDO"; cell: Cell }
-    | { type: "SURFACE"; sector?: number };
+    | { type: "SURFACE"; sector?: number }
+    | { type: "SILENCE"; direction?: Direction; distance?: number };
   type Errors = {
     mse: number;
     oppHealth: number;
@@ -25,5 +26,6 @@ declare global {
 export const DIRECTIONS: Direction[] = ["N", "E", "S", "W"];
 export const DEFAULT_WIDTH = 15;
 export const DEFAULT_HEIGHT = 15;
+export const SILENCE_RANGE = 4;
 export const TORPEDO_RANGE = 4;
 export const MAX_CHARGE = 3;
