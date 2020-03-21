@@ -16,6 +16,18 @@ export function executeActions(actions: Action[]) {
   console.log(actionStrings.join("|"));
 }
 
+export function getAllValidActions(
+  validDirections: Direction[],
+  charges: Charges
+) {
+  const actions: Action[] = validDirections.map(direction => ({
+    type: "MOVE",
+    direction,
+    charge: "TORPEDO"
+  }));
+  return actions;
+}
+
 export function parseActionsFromString(actionsString: string, map: CellMap) {
   const actions = [];
   for (const actionString of actionsString.split("|")) {

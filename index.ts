@@ -1,4 +1,8 @@
-import { executeActions, parseActionsFromString } from "./action";
+import {
+  executeActions,
+  getAllValidActions,
+  parseActionsFromString
+} from "./action";
 import { getCoords, getMap } from "./map";
 
 import { MAX_CHARGE } from "./constants";
@@ -22,7 +26,7 @@ const startPosition = getStartPosition(map);
 console.log(`${startPosition.x} ${startPosition.y}`);
 
 const visited = new Set<Cell>();
-const charges = { TORPEDO: 0 };
+const charges: Charges = { TORPEDO: 0 };
 
 while (true) {
   const data = getData();
@@ -34,17 +38,18 @@ while (true) {
   oppActions.forEach(action => updatePossibleCells(oppCells, action));
 
   const validDirections = getValidDirections(myCell, visited);
+  const validActions = getAllValidActions(validDirections, charges);
   const params = { myCell, oppCells };
-  const directionErrors = validDirections.map(direction => ({
-    direction,
-    errors: getErrors(direction, params)
+  const actionErrors = validActions.map(action => ({
+    action,
+    errors: getErrors(action, params)
   }));
-  const actions = decideActions(directionErrors);
+  const actions = decideActions(actionErrors);
 
   console.error(
     "OppCells",
     Array.from(oppCells).map(cell => getCoords(cell)),
-    directionErrors,
+    actionErrors,
     charges
   );
 

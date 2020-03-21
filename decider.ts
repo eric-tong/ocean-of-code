@@ -1,35 +1,29 @@
 export function decideActions(
-  directionErrors: { direction: Direction; errors: Errors }[]
+  actionErrors: { action: Action; errors: Errors }[]
 ) {
   const actions: Action[] = [];
-  const minErrorDirection = getMinErrorDirection(directionErrors);
+  const minErrorAction = getMinErrorAction(actionErrors);
 
-  if (minErrorDirection) {
-    actions.push({
-      type: "MOVE",
-      direction: minErrorDirection,
-      charge: "TORPEDO"
-    });
+  if (minErrorAction) {
+    actions.push(minErrorAction);
   } else {
     actions.push({ type: "SURFACE" });
   }
   return actions;
 }
 
-function getMinErrorDirection(
-  directionErrors: { direction: Direction; errors: Errors }[]
-) {
+function getMinErrorAction(actionErrors: { action: Action; errors: Errors }[]) {
   let minError = Number.MAX_SAFE_INTEGER;
-  let minErrorDirection: Direction | undefined;
+  let minErrorAction: Action | undefined;
   for (const {
-    direction,
+    action,
     errors: { mse }
-  } of directionErrors) {
+  } of actionErrors) {
     const error = mse;
     if (error < minError) {
       minError = error;
-      minErrorDirection = direction;
+      minErrorAction = action;
     }
   }
-  return minErrorDirection;
+  return minErrorAction;
 }

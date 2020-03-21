@@ -6,11 +6,16 @@ type Params = {
   oppCells: Set<Cell>;
 };
 
-export function getErrors(direction: Direction, { myCell, oppCells }: Params) {
-  const directionIndex = DIRECTIONS.indexOf(direction);
-  const testCell = myCell[directionIndex];
-  if (!testCell) throw new Error("Invalid test cell");
+export function getErrors(action: Action, { myCell, oppCells }: Params) {
+  switch (action.type) {
+    case "MOVE":
+      const directionIndex = DIRECTIONS.indexOf(action.direction);
+      const testCell = myCell[directionIndex];
+      if (!testCell) throw new Error("Invalid test cell");
 
-  const mse = getMeanSquaredError(testCell, Array.from(oppCells.values()));
-  return { mse };
+      const mse = getMeanSquaredError(testCell, Array.from(oppCells.values()));
+      return { mse };
+    default:
+      throw new Error("Invalid action for finding error");
+  }
 }
