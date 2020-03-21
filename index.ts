@@ -35,7 +35,7 @@ while (true) {
   visited.add(myCell);
 
   const oppActions = parseActionsFromString(data.oppOrders, map);
-  oppActions.forEach(action => updatePossibleCells(oppCells, action));
+  oppActions.forEach(action => updatePossibleCells(oppCells, action, map));
 
   const validDirections = getValidDirections(myCell, visited);
   const validActions = getAllValidActions({

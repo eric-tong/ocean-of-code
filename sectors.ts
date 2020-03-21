@@ -1,6 +1,12 @@
+import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from "./constants";
+
 import { getCoords } from "./map";
 
-export function getSector(cell: Cell, width: number, height: number) {
+export function getSector(
+  cell: Cell,
+  width: number = DEFAULT_WIDTH,
+  height: number = DEFAULT_HEIGHT
+) {
   const coords = getCoords(cell);
   const sectorWidth = width / 3;
   const sectorHeight = height / 3;
@@ -37,4 +43,5 @@ export function getCellsInSector(sector: number, map: CellMap) {
       if (cell) cellsInSector.add(cell);
     }
   }
+  return cellsInSector;
 }

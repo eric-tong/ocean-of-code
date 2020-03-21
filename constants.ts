@@ -23,5 +23,7 @@ declare global {
 }
 
 export const DIRECTIONS: Direction[] = ["N", "E", "S", "W"];
+export const DEFAULT_WIDTH = 15;
+export const DEFAULT_HEIGHT = 15;
 export const TORPEDO_RANGE = 4;
 export const MAX_CHARGE = 3;

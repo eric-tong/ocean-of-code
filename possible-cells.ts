@@ -1,8 +1,13 @@
 import { DIRECTIONS, TORPEDO_RANGE } from "./constants";
 
+import { getCellsInSector } from "./sectors";
 import { getCellsWithinRange } from "./cell-utils";
 
-export function updatePossibleCells(set: Set<Cell>, action: Action) {
+export function updatePossibleCells(
+  set: Set<Cell>,
+  action: Action,
+  map: CellMap
+) {
   const newCells: Cell[] = [];
   const oldCells = Array.from(set.values());
   switch (action.type) {
@@ -22,6 +27,12 @@ export function updatePossibleCells(set: Set<Cell>, action: Action) {
       });
       break;
     case "SURFACE":
+      if (!action.sector) throw new Error("No sector provided");
+
+      const cellsInSector = getCellsInSector(action.sector, map);
+      oldCells.forEach(cell => {
+        if (cellsInSector.has(cell)) newCells.push(cell);
+      });
       return;
     default:
       console.error(action);
