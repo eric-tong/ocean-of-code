@@ -20,12 +20,13 @@ export function getAllValidActions(
   validDirections: Direction[],
   charges: Charges
 ) {
-  const actions: Action[] = validDirections.map(direction => ({
+  const moveActions: Action[] = validDirections.map(direction => ({
     type: "MOVE",
     direction,
     charge: "TORPEDO"
   }));
-  return actions;
+  const surfaceAction: Action = { type: "SURFACE" };
+  return [...moveActions, surfaceAction];
 }
 
 export function parseActionsFromString(actionsString: string, map: CellMap) {

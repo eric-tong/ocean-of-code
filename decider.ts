@@ -3,11 +3,10 @@ export function decideActions(
 ) {
   const actions: Action[] = [];
   const minErrorAction = getMinErrorAction(actionErrors);
+  if (!minErrorAction) throw Error("No action returned");
 
   if (minErrorAction) {
     actions.push(minErrorAction);
-  } else {
-    actions.push({ type: "SURFACE" });
   }
   return actions;
 }
@@ -17,9 +16,9 @@ function getMinErrorAction(actionErrors: { action: Action; errors: Errors }[]) {
   let minErrorAction: Action | undefined;
   for (const {
     action,
-    errors: { mse }
+    errors: { mse, oppKnowledge }
   } of actionErrors) {
-    const error = mse;
+    const error = mse + oppKnowledge;
     if (error < minError) {
       minError = error;
       minErrorAction = action;
