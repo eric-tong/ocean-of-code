@@ -77,7 +77,7 @@ export function getErrors(
       const myKnowledgeAfterSonar =
         (sectorCount / totalCount) * sectorCount +
         (1 - sectorCount / totalCount) * (totalCount - sectorCount);
-      const myKnowledgeLoss = oppCells.size - myKnowledgeAfterSonar;
+      const myKnowledgeLoss = myKnowledgeAfterSonar - oppCells.size;
       return { myKnowledgeLoss };
     case "SURFACE":
       return {

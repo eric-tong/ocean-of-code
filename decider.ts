@@ -1,29 +1,27 @@
 export function decideActions(
   actionErrors: { action: Action; errors: Errors }[]
 ) {
-  const actions: Action[] = [];
+  const actionTotalErrors = actionErrors
+    .map(({ action, errors }) => ({
+      action,
+      totalError: getTotalError(errors)
+    }))
+    .sort((a, b) => a.totalError - b.totalError);
+  console.error(actionTotalErrors);
 
-  // TODO Allow action combinations if beneficial
-  const minErrorAction = getMinErrorAction(actionErrors);
-  if (!minErrorAction) throw Error("No action returned");
+  const firstActionError = actionTotalErrors.shift();
+  if (!firstActionError) throw new Error("No available actions");
 
-  if (minErrorAction) {
-    actions.push(minErrorAction);
+  const actions: Action[] = [firstActionError.action];
+  if (actionTotalErrors.length > 1) {
+    const secondActionTotalError = actionTotalErrors.find(
+      ({ action, totalError }) =>
+        action.type !== firstActionError.action.type && totalError < 0
+    );
+    if (secondActionTotalError) actions.push(secondActionTotalError.action);
   }
+
   return actions;
-}
-
-function getMinErrorAction(actionErrors: { action: Action; errors: Errors }[]) {
-  let minError = Number.MAX_SAFE_INTEGER;
-  let minErrorAction: Action | undefined;
-  for (const { action, errors } of actionErrors) {
-    const totalError = getTotalError(errors);
-    if (totalError < minError) {
-      minError = totalError;
-      minErrorAction = action;
-    }
-  }
-  return minErrorAction;
 }
 
 function getTotalError({
