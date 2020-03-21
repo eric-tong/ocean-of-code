@@ -1,20 +1,17 @@
 import { DIRECTIONS } from "./constants";
 import { getMeanSquaredError } from "./cell-utils";
 
-export function getMinErrorDirection(
+export function getDirectionErrors(
   origin: (Cell | undefined)[],
   testCells: Cell[],
   invalidCells: Set<Cell>
 ) {
-  let minError = Number.MAX_SAFE_INTEGER;
-  let minErrorDirection: Direction | undefined;
+  const directionErrors: DirectionError[] = [];
   origin.forEach((neighbor, directionIndex) => {
     if (!neighbor || invalidCells.has(neighbor)) return;
     const error = getMeanSquaredError(neighbor, testCells);
-    if (error < minError) {
-      minError = error;
-      minErrorDirection = DIRECTIONS[directionIndex];
-    }
+    const direction = DIRECTIONS[directionIndex];
+    directionErrors.push({ direction, error });
   });
-  return minErrorDirection;
+  return directionErrors;
 }
