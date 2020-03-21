@@ -85,6 +85,12 @@ function parseActionFromString(
     case "SURFACE":
       const sector = parseBase10(payload[0]);
       return { type, sector };
+    case "SONAR":
+      // TODO Handle sonar
+      return;
+    case "SILENCE":
+      // TODO Handle silence
+      return;
     case "NA":
       return;
     default:
