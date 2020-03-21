@@ -1,4 +1,7 @@
+import { TORPEDO_RANGE } from "./constants";
 import { getCoords } from "./map";
+
+type TestUnit = { distance: number; cell: Cell };
 
 export function getMeanSquaredError(origin: Cell, testCells: Cell[]) {
   const originCoords = getCoords(origin);
@@ -15,19 +18,20 @@ export function getMeanSquaredError(origin: Cell, testCells: Cell[]) {
   return error / count;
 }
 
-export function getCellsWithinRange(
-  origin: Cell | undefined,
-  range: number,
-  visited: Set<Cell> = new Set<Cell>()
-): Cell[] {
-  if (!origin || visited.has(origin)) return [];
-  visited.add(origin);
+export function getCellsWithinRange(origin: Cell, range: number): Set<Cell> {
+  const visited = new Set<Cell>();
+  const queue: TestUnit[] = [{ distance: 0, cell: origin }];
 
-  if (range <= 0) return [origin];
+  while (queue.length) {
+    const testUnit = queue.shift();
+    if (!testUnit || visited.has(testUnit.cell)) continue;
 
-  const cells: Cell[] = [];
-  origin.forEach(neighbor => {
-    cells.push(...getCellsWithinRange(neighbor, range - 1, visited));
-  });
-  return cells;
+    visited.add(testUnit.cell);
+    const newDistance = testUnit.distance + 1;
+    if (newDistance <= TORPEDO_RANGE)
+      testUnit.cell.forEach(neighbor => {
+        if (neighbor) queue.push({ distance: newDistance, cell: neighbor });
+      });
+  }
+  return visited;
 }
