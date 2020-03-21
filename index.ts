@@ -38,7 +38,12 @@ while (true) {
   oppActions.forEach(action => updatePossibleCells(oppCells, action));
 
   const validDirections = getValidDirections(myCell, visited);
-  const validActions = getAllValidActions(validDirections, charges);
+  const validActions = getAllValidActions({
+    validDirections,
+    charges,
+    myCell,
+    oppCells
+  });
   const params = { myCell, oppCells };
   const actionErrors = validActions.map(action => ({
     action,

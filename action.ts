@@ -1,4 +1,40 @@
+import { TORPEDO_RANGE } from "./constants";
+import { getCellsWithinRange } from "./cell-utils";
+import { getCoords } from "./map";
 import { parseBase10 } from "./math-utils";
+
+type Params = {
+  validDirections: Direction[];
+  charges: Charges;
+  myCell: Cell;
+  oppCells: Set<Cell>;
+};
+
+export function getAllValidActions({
+  validDirections,
+  charges,
+  oppCells,
+  myCell
+}: Params) {
+  const moveActions: Action[] = validDirections.map(direction => ({
+    type: "MOVE",
+    direction,
+    charge: "TORPEDO"
+  }));
+  const surfaceAction: Action = { type: "SURFACE" };
+
+  const deviceActions: Action[] = [];
+  if (charges.TORPEDO >= 3) {
+    const cellsInRange = getCellsWithinRange(myCell, TORPEDO_RANGE);
+    for (const cell of cellsInRange.values()) {
+      if (oppCells.has(cell)) {
+        deviceActions.push({ type: "TORPEDO", cell });
+      }
+    }
+  }
+
+  return [...moveActions, ...deviceActions, surfaceAction];
+}
 
 export function executeActions(actions: Action[]) {
   const actionStrings = [];
@@ -9,24 +45,17 @@ export function executeActions(actions: Action[]) {
           `MOVE ${action.direction} ${action.charge ? action.charge : ""}`
         );
         break;
+      case "TORPEDO":
+        const { x, y } = getCoords(action.cell);
+        actionStrings.push(`TORPEDO ${x} ${y}`);
+        break;
       case "SURFACE":
         actionStrings.push("SURFACE");
         break;
+      default:
+        throw new Error("Cannot excute action");
     }
   console.log(actionStrings.join("|"));
-}
-
-export function getAllValidActions(
-  validDirections: Direction[],
-  charges: Charges
-) {
-  const moveActions: Action[] = validDirections.map(direction => ({
-    type: "MOVE",
-    direction,
-    charge: "TORPEDO"
-  }));
-  const surfaceAction: Action = { type: "SURFACE" };
-  return [...moveActions, surfaceAction];
 }
 
 export function parseActionsFromString(actionsString: string, map: CellMap) {

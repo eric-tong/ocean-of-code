@@ -28,7 +28,7 @@ export function getCellsWithinRange(origin: Cell, range: number): Set<Cell> {
 
     visited.add(testUnit.cell);
     const newDistance = testUnit.distance + 1;
-    if (newDistance <= TORPEDO_RANGE)
+    if (newDistance <= range)
       testUnit.cell.forEach(neighbor => {
         if (neighbor) queue.push({ distance: newDistance, cell: neighbor });
       });

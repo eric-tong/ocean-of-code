@@ -17,7 +17,9 @@ export function getErrors(
       if (!testCell) throw new Error("Invalid test cell");
 
       const mse = getMeanSquaredError(testCell, Array.from(oppCells.values()));
-      return { mse, oppKnowledge: 0 };
+      return { mse, oppKnowledge: 1 };
+    case "TORPEDO":
+      return { mse: 0, oppKnowledge: 5 };
     case "SURFACE":
       return { mse: 0, oppKnowledge: 1000 };
     default:
