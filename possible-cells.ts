@@ -1,4 +1,6 @@
-import { DIRECTIONS } from "./constants";
+import { DIRECTIONS, TORPEDO_RANGE } from "./constants";
+
+import { getCellsWithinRange } from "./cell-utils";
 
 export function updatePossibleCells(set: Set<Cell>, action: Action) {
   const newCells: Cell[] = [];
@@ -12,7 +14,13 @@ export function updatePossibleCells(set: Set<Cell>, action: Action) {
       });
       break;
     case "TORPEDO":
-      return;
+      const cellsWithinRange = new Set(
+        getCellsWithinRange(action.cell, TORPEDO_RANGE)
+      );
+      oldCells.forEach(cell => {
+        if (cellsWithinRange.has(cell)) newCells.push(cell);
+      });
+      break;
     case "SURFACE":
       return;
     default:

@@ -14,16 +14,19 @@ export function executeAction(action: Action) {
   }
 }
 
-export function parseActionsFromString(actionsString: string) {
+export function parseActionsFromString(actionsString: string, map: CellMap) {
   const actions = [];
   for (const actionString of actionsString.split("|")) {
-    const action = parseActionFromString(actionString);
+    const action = parseActionFromString(actionString, map);
     if (action) actions.push(action);
   }
   return actions;
 }
 
-function parseActionFromString(actionString: string): Action | undefined {
+function parseActionFromString(
+  actionString: string,
+  map: CellMap
+): Action | undefined {
   const [type, ...payload] = actionString.split(" ");
   switch (type) {
     case "MOVE":
@@ -32,7 +35,9 @@ function parseActionFromString(actionString: string): Action | undefined {
       return { type, direction, charge };
     case "TORPEDO":
       const [x, y] = payload.map(parseBase10);
-      return { type, x, y };
+      const cell = map[x][y];
+      if (!cell) throw new Error("Torpedoed cell does not exist");
+      return { type, cell };
     case "SURFACE":
       const sector = parseBase10(payload[0]);
       return { type, sector };

@@ -11,8 +11,9 @@ declare global {
         direction: Direction;
         charge?: Device;
       }
-    | { type: "TORPEDO"; x: number; y: number }
+    | { type: "TORPEDO"; cell: Cell }
     | { type: "SURFACE"; sector?: number };
 }
 
 export const DIRECTIONS: Direction[] = ["N", "E", "S", "W"];
+export const TORPEDO_RANGE = 4;

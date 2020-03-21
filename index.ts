@@ -1,7 +1,7 @@
 import { executeAction, parseActionsFromString } from "./action";
+import { getCoords, getMap } from "./map";
 
 import { getData } from "./data";
-import { getMap } from "./map";
 import { getMinErrorDirection } from "./direction";
 import { getOppCells } from "./opponent";
 import { getStartPosition } from "./start-position";
@@ -26,7 +26,7 @@ while (true) {
   if (!myCell) throw new Error("My cell is empty");
   visited.add(myCell);
 
-  const oppActions = parseActionsFromString(data.oppOrders);
+  const oppActions = parseActionsFromString(data.oppOrders, map);
   oppActions.forEach(action => updatePossibleCells(oppCells, action));
 
   const minErrorDirection = getMinErrorDirection(
@@ -41,5 +41,11 @@ while (true) {
     action = { type: "SURFACE" };
     visited.clear();
   }
+
+  console.error(
+    "OppCells",
+    Array.from(oppCells).map(cell => getCoords(cell))
+  );
+
   executeAction(action);
 }

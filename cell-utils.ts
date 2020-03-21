@@ -14,3 +14,20 @@ export function getMeanSquaredError(origin: Cell, testCells: Cell[]) {
   }
   return error / count;
 }
+
+export function getCellsWithinRange(
+  origin: Cell | undefined,
+  range: number,
+  visited: Set<Cell> = new Set<Cell>()
+): Cell[] {
+  if (!origin || visited.has(origin)) return [];
+  visited.add(origin);
+
+  if (range <= 0) return [origin];
+
+  const cells: Cell[] = [];
+  origin.forEach(neighbor => {
+    cells.push(...getCellsWithinRange(neighbor, range - 1, visited));
+  });
+  return cells;
+}
