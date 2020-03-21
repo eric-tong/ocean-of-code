@@ -1,26 +1,57 @@
-type Params = {
-  directionErrors: DirectionError[];
-};
+import { DIRECTIONS } from "./constants";
+import { getMeanSquaredError } from "./cell-utils";
 
-export function decideActions(params: Params) {
+type Params = {
+  myCell: Cell;
+  oppCells: Set<Cell>;
+  validDirections: Direction[];
+};
+type Error = { mse: number };
+type DirectionError = { direction: Direction; error: Error };
+
+export function decideActions({ myCell, oppCells, validDirections }: Params) {
   const actions: Action[] = [];
 
-  const minError = Math.min(
-    ...params.directionErrors.map(({ error }) => error)
-  );
-  const minDirectionError = params.directionErrors.find(
-    ({ error }) => error === minError
-  );
+  const directionErrors = validDirections.map(direction => ({
+    direction,
+    error: getError(direction)
+  }));
+  const minErrorDirection = getMinErrorDirection(directionErrors);
 
-  if (minDirectionError) {
+  if (minErrorDirection) {
     actions.push({
       type: "MOVE",
-      direction: minDirectionError.direction,
+      direction: minErrorDirection,
       charge: "TORPEDO"
     });
   } else {
     actions.push({ type: "SURFACE" });
   }
 
+  console.error(directionErrors);
   return actions;
+
+  function getError(direction: Direction) {
+    const directionIndex = DIRECTIONS.indexOf(direction);
+    const testCell = myCell[directionIndex];
+    if (!testCell) throw new Error("Invalid test cell");
+
+    const mse = getMeanSquaredError(testCell, Array.from(oppCells.values()));
+    return { mse };
+  }
+}
+
+function getMinErrorDirection(directionErrors: DirectionError[]) {
+  let minError = Number.MAX_SAFE_INTEGER;
+  let minErrorDirection: Direction | undefined;
+  for (const {
+    direction,
+    error: { mse }
+  } of directionErrors) {
+    const error = mse;
+    if (error < minError) {
+      minErrorDirection = direction;
+    }
+  }
+  return minErrorDirection;
 }

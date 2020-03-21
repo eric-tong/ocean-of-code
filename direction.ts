@@ -1,17 +1,12 @@
 import { DIRECTIONS } from "./constants";
-import { getMeanSquaredError } from "./cell-utils";
 
-export function getDirectionErrors(
-  origin: (Cell | undefined)[],
-  testCells: Cell[],
-  invalidCells: Set<Cell>
-) {
-  const directionErrors: DirectionError[] = [];
+export function getValidDirections(origin: Cell, invalidCells: Set<Cell>) {
+  const directions: Direction[] = [];
   origin.forEach((neighbor, directionIndex) => {
     if (!neighbor || invalidCells.has(neighbor)) return;
-    const error = getMeanSquaredError(neighbor, testCells);
+
     const direction = DIRECTIONS[directionIndex];
-    directionErrors.push({ direction, error });
+    directions.push(direction);
   });
-  return directionErrors;
+  return directions;
 }

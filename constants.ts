@@ -5,7 +5,6 @@ declare global {
   type CellMap = (Cell | undefined)[][];
   type Direction = "N" | "E" | "S" | "W";
   type Device = "TORPEDO";
-  type DirectionError = { direction: Direction; error: number };
   type Action =
     | {
         type: "MOVE";
