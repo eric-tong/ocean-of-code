@@ -16,7 +16,8 @@ export function getErrors(
   { myCell, myCells, oppCells, map }: Params
 ): Errors {
   const currentMse = getMeanSquaredError(myCell, Array.from(oppCells.values()));
-  const newMyCells = getPossibleCells(myCells, action, map);
+  const newMyCells =
+    action.type === "SONAR" ? myCells : getPossibleCells(myCells, action, map);
   const oppKnowledgeGain = myCells.size - newMyCells.size;
   switch (action.type) {
     case "MOVE":
@@ -43,7 +44,7 @@ export function getErrors(
             map
           );
           const oppKnowledgeGain = newMyCells.size - cellsAfterSilence.size;
-          errors.oppKnowledgeGain -= oppKnowledgeGain / MAX_CHARGE.SILENCE;
+          errors.oppKnowledgeGain += oppKnowledgeGain / MAX_CHARGE.SILENCE;
           break;
         case "SONAR":
           const sectorCount = uniqueSectors(oppCells).length;
@@ -51,8 +52,8 @@ export function getErrors(
             (oppCells.size * (sectorCount * sectorCount - sectorCount + 2)) /
             sectorCount /
             sectorCount;
-          const myKnowledgeLoss = oppCells.size - myKnowledgeAfterSonar;
-          errors.myKnowledgeLoss -= myKnowledgeLoss / MAX_CHARGE.SONAR;
+          const myKnowledgeLoss = myKnowledgeAfterSonar - oppCells.size;
+          errors.myKnowledgeLoss += myKnowledgeLoss / MAX_CHARGE.SONAR;
           break;
       }
       return errors;

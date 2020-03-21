@@ -69,6 +69,9 @@ export function executeActions(actions: Action[]) {
       case "SURFACE":
         actionStrings.push("SURFACE");
         break;
+      case "SONAR":
+        actionStrings.push(`SONAR ${action.sector}`);
+        break;
       default:
         throw new Error("Cannot excute action");
     }
@@ -109,6 +112,9 @@ function parseActionFromString(
       return { type };
     case "MINE":
       // TODO Handle mines
+      return;
+    case "TRIGGER":
+      // TODO Handle trigger
       return;
     case "NA":
       return;

@@ -29,15 +29,34 @@ console.log(`${startPosition.x} ${startPosition.y}`);
 const visited = new Set<Cell>();
 const charges: Charges = { TORPEDO: 0, SONAR: 0, SILENCE: 0 };
 
+let lastSonarSector = -1;
+let lastCell: Cell | undefined = undefined;
+
 while (true) {
   const data = getData();
   const myCell = map[data.x][data.y];
   if (!myCell) throw new Error("My cell is empty");
   visited.add(myCell);
 
+  if (data.sonarResult !== "NA") {
+    oppCells = getPossibleCells(
+      oppCells,
+      {
+        type: "SONAR",
+        sector: lastSonarSector,
+        inSector: data.sonarResult === "Y"
+      },
+      map
+    );
+  }
+
   const oppActions = parseActionsFromString(data.oppOrders, map);
   oppActions.forEach(action => {
-    oppCells = getPossibleCells(oppCells, action, map);
+    if (action.type === "SONAR") {
+      myCells = getPossibleCells(myCells, action, map, lastCell);
+    } else {
+      oppCells = getPossibleCells(oppCells, action, map);
+    }
   });
 
   const validDirections = getValidDirections(myCell, visited);
@@ -56,12 +75,14 @@ while (true) {
 
   actions.forEach(updateCounts);
   actions.forEach(action => {
-    myCells = getPossibleCells(myCells, action, map);
+    if (action.type !== "SONAR")
+      myCells = getPossibleCells(myCells, action, map);
   });
+  lastCell = myCell;
 
   console.error(
-    // Array.from(oppCells).map(cell => getCoords(cell)),
-    // Array.from(myCells).map(cell => getCoords(cell)),
+    Array.from(oppCells).map(cell => getCoords(cell)),
+    Array.from(myCells).map(cell => getCoords(cell)),
     actionErrors,
     charges
   );
@@ -84,6 +105,10 @@ function updateCounts(action: Action) {
       break;
     case "TORPEDO":
       charges.TORPEDO = 0;
+      break;
+    case "SONAR":
+      lastSonarSector = action.sector;
+      charges.SONAR = 0;
       break;
   }
 }

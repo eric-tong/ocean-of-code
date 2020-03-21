@@ -13,7 +13,7 @@ declare global {
       }
     | { type: "TORPEDO"; cell: Cell }
     | { type: "SURFACE"; sector: number }
-    | { type: "SONAR"; sector: number }
+    | { type: "SONAR"; sector: number; inSector?: boolean }
     | { type: "SILENCE"; direction?: Direction; distance?: number };
   type Errors = {
     mse?: number;

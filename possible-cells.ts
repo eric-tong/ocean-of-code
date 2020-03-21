@@ -1,12 +1,13 @@
 import { DIRECTIONS, SILENCE_RANGE, TORPEDO_RANGE } from "./constants";
+import { getCellsInSector, getSector } from "./sectors";
 
-import { getCellsInSector } from "./sectors";
 import { getCellsWithinRange } from "./cell-utils";
 
 export function getPossibleCells(
   prevSet: Set<Cell>,
   action: Action,
-  map: CellMap
+  map: CellMap,
+  prevCell?: Cell
 ) {
   const newCells = new Set<Cell>();
   const oldCells = Array.from(prevSet.values());
@@ -53,6 +54,23 @@ export function getPossibleCells(
           }
         }
       });
+      break;
+    case "SONAR":
+      let inSector = action.inSector;
+      if (typeof inSector === "undefined") {
+        if (!prevCell) throw new Error("No previous cell provided");
+        inSector = action.sector === getSector(prevCell);
+      }
+
+      const sectorCells = getCellsInSector(action.sector, map);
+      for (const cell of oldCells) {
+        if (
+          (inSector && sectorCells.has(cell)) ||
+          (!inSector && !sectorCells.has(cell))
+        ) {
+          newCells.add(cell);
+        }
+      }
       break;
     default:
       console.error(action);
