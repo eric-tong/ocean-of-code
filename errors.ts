@@ -1,6 +1,6 @@
 import { DIRECTIONS, MAX_CHARGE } from "./constants";
+import { getSector, uniqueSectors } from "./sectors";
 
-import { countSectors } from "./sectors";
 import { getMeanSquaredError } from "./cell-utils";
 import { getPossibleCells } from "./possible-cells";
 
@@ -46,8 +46,11 @@ export function getErrors(
           errors.oppKnowledgeGain -= oppKnowledgeGain / MAX_CHARGE.SILENCE;
           break;
         case "SONAR":
-          const sectorCount = countSectors(oppCells);
-          const myKnowledgeAfterSonar = oppCells.size / sectorCount;
+          const sectorCount = uniqueSectors(oppCells).length;
+          const myKnowledgeAfterSonar =
+            (oppCells.size * (sectorCount * sectorCount - sectorCount + 2)) /
+            sectorCount /
+            sectorCount;
           const myKnowledgeLoss = oppCells.size - myKnowledgeAfterSonar;
           errors.myKnowledgeLoss -= myKnowledgeLoss / MAX_CHARGE.SONAR;
           break;
@@ -60,6 +63,21 @@ export function getErrors(
         myDamage: getMyDamage(action.cell, myCell),
         oppKnowledgeGain
       };
+    case "SONAR":
+      let sectorCount = 0;
+      let totalCount = 0;
+      for (const cell of oppCells.values()) {
+        const sector = getSector(cell);
+        if (sector === action.sector) {
+          sectorCount++;
+        }
+        totalCount++;
+      }
+      const myKnowledgeAfterSonar =
+        (sectorCount / totalCount) * sectorCount +
+        (1 - sectorCount / totalCount) * (totalCount - sectorCount);
+      const myKnowledgeLoss = oppCells.size - myKnowledgeAfterSonar;
+      return { myKnowledgeLoss };
     case "SURFACE":
       return {
         mseGain: 0,

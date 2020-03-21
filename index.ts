@@ -60,8 +60,8 @@ while (true) {
   });
 
   console.error(
-    Array.from(oppCells).map(cell => getCoords(cell)),
-    Array.from(myCells).map(cell => getCoords(cell)),
+    // Array.from(oppCells).map(cell => getCoords(cell)),
+    // Array.from(myCells).map(cell => getCoords(cell)),
     actionErrors,
     charges
   );

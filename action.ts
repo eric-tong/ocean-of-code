@@ -1,8 +1,8 @@
 import { DEVICES, MAX_CHARGE, TORPEDO_RANGE } from "./constants";
+import { getSector, uniqueSectors } from "./sectors";
 
 import { getCellsWithinRange } from "./cell-utils";
 import { getCoords } from "./map";
-import { getSector } from "./sectors";
 import { parseBase10 } from "./math-utils";
 
 type Params = {
@@ -43,6 +43,11 @@ export function getAllValidActions({
         actions.push({ type: "TORPEDO", cell });
       }
     }
+  }
+
+  if (charges.SONAR >= MAX_CHARGE.SONAR) {
+    const sectors = uniqueSectors(oppCells);
+    sectors.forEach(sector => actions.push({ type: "SONAR", sector }));
   }
 
   return actions;
