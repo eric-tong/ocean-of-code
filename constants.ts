@@ -11,6 +11,7 @@ declare global {
         direction: Direction;
         charge?: Device;
       }
+    | { type: "TORPEDO"; x: number; y: number }
     | { type: "SURFACE" };
 }
 

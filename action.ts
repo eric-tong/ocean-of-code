@@ -1,4 +1,5 @@
 import { DIRECTIONS } from "./constants";
+import { parseBase10 } from "./math-utils";
 
 export function executeAction(action: Action) {
   switch (action.type) {
@@ -13,14 +14,28 @@ export function executeAction(action: Action) {
   }
 }
 
-export function parseActionFromString(actionString: string): Action {
-  const [type, payload] = actionString.split(" ", 2);
+export function parseActionsFromString(actionsString: string) {
+  const actions = [];
+  for (const actionString of actionsString.split("|")) {
+    const action = parseActionFromString(actionString);
+    if (action) actions.push(action);
+  }
+  return actions;
+}
+
+function parseActionFromString(actionString: string): Action | undefined {
+  const [type, ...payload] = actionString.split(" ");
   switch (type) {
     case "MOVE":
       // @ts-ignore
-      const [direction, charge]: [Direction, Device] = payload.split(" ");
+      const [direction, charge]: [Direction, Device] = payload;
       return { type, direction, charge };
+    case "TORPEDO":
+      const [x, y] = payload.map(parseBase10);
+      return { type, x, y };
+    case "NA":
+      return;
     default:
-      throw new Error("Invalid action string");
+      throw new Error(`Invalid action string ${actionString}`);
   }
 }
