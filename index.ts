@@ -47,7 +47,7 @@ while (true) {
     myCell,
     oppCells
   });
-  const params = { myCell, oppCells };
+  const params = { myCell, myCells, oppCells, map };
   const actionErrors = validActions.map(action => ({
     action,
     errors: getErrors(action, params)
@@ -59,12 +59,12 @@ while (true) {
     myCells = getPossibleCells(myCells, action, map);
   });
 
-  console.error({
-    oppCells: Array.from(oppCells).map(cell => getCoords(cell)),
-    myCells: Array.from(myCells).map(cell => getCoords(cell)),
+  console.error(
+    Array.from(oppCells).map(cell => getCoords(cell)),
+    Array.from(myCells).map(cell => getCoords(cell)),
     actionErrors,
     charges
-  });
+  );
   executeActions(actions);
 }
 
