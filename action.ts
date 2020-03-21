@@ -1,17 +1,19 @@
-import { DIRECTIONS } from "./constants";
 import { parseBase10 } from "./math-utils";
 
-export function executeAction(action: Action) {
-  switch (action.type) {
-    case "MOVE":
-      console.log(
-        `MOVE ${action.direction} ${action.charge ? action.charge : ""}`
-      );
-      break;
-    case "SURFACE":
-      console.log("SURFACE");
-      break;
-  }
+export function executeActions(actions: Action[]) {
+  const actionStrings = [];
+  for (const action of actions)
+    switch (action.type) {
+      case "MOVE":
+        actionStrings.push(
+          `MOVE ${action.direction} ${action.charge ? action.charge : ""}`
+        );
+        break;
+      case "SURFACE":
+        actionStrings.push("SURFACE");
+        break;
+    }
+  console.log(actionStrings.join("|"));
 }
 
 export function parseActionsFromString(actionsString: string, map: CellMap) {

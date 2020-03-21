@@ -1,4 +1,4 @@
-import { executeAction, parseActionsFromString } from "./action";
+import { executeActions, parseActionsFromString } from "./action";
 import { getCoords, getMap } from "./map";
 
 import { MAX_CHARGE } from "./constants";
@@ -49,7 +49,7 @@ while (true) {
   );
 
   actions.forEach(updateCounts);
-  actions.forEach(executeAction);
+  executeActions(actions);
 }
 
 function updateCounts(action: Action) {
