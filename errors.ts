@@ -48,6 +48,7 @@ export function getErrors(
           break;
         case "SONAR":
           const sectorCount = uniqueSectors(oppCells).length;
+          if (sectorCount < 2 || oppCells.size < 10) break;
           const myKnowledgeAfterSonar =
             (oppCells.size * (sectorCount * sectorCount - sectorCount + 2)) /
             sectorCount /
