@@ -12,7 +12,7 @@ declare global {
         charge?: Device;
       }
     | { type: "TORPEDO"; x: number; y: number }
-    | { type: "SURFACE" };
+    | { type: "SURFACE"; sector?: number };
 }
 
 export const DIRECTIONS: Direction[] = ["N", "E", "S", "W"];

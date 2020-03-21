@@ -33,6 +33,9 @@ function parseActionFromString(actionString: string): Action | undefined {
     case "TORPEDO":
       const [x, y] = payload.map(parseBase10);
       return { type, x, y };
+    case "SURFACE":
+      const sector = parseBase10(payload[0]);
+      return { type, sector };
     case "NA":
       return;
     default:

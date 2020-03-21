@@ -27,7 +27,7 @@ while (true) {
   visited.add(myCell);
 
   const oppActions = parseActionsFromString(data.oppOrders);
-  //   oppActions.forEach(action => updatePossibleCells(oppCells, action));
+  oppActions.forEach(action => updatePossibleCells(oppCells, action));
 
   const minErrorDirection = getMinErrorDirection(
     myCell,

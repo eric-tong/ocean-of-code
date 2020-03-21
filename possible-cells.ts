@@ -11,6 +11,13 @@ export function updatePossibleCells(set: Set<Cell>, action: Action) {
         if (newCell) newCells.push(newCell);
       });
       break;
+    case "TORPEDO":
+      return;
+    case "SURFACE":
+      return;
+    default:
+      console.error(action);
+      throw new Error("Invalid action to update possible cells");
   }
   set.clear();
   newCells.forEach(cell => set.add(cell));
