@@ -10,17 +10,18 @@ import { decideActions } from "./decider";
 import { getData } from "./data";
 import { getErrors } from "./errors";
 import { getOppCells } from "./opponent";
+import { getPossibleCells } from "./possible-cells";
 import { getStartPosition } from "./start-position";
 import { getValidDirections } from "./direction";
 import { parseBase10 } from "./math-utils";
-import { updatePossibleCells } from "./possible-cells";
 
 // @ts-ignore
 const [width, height, myId]: number[] = readline()
   .split(" ")
   .map(parseBase10);
 const map = getMap(width, height);
-const oppCells = getOppCells(map);
+let oppCells = getOppCells(map);
+let myCells = getOppCells(map);
 
 const startPosition = getStartPosition(map);
 console.log(`${startPosition.x} ${startPosition.y}`);
@@ -35,7 +36,9 @@ while (true) {
   visited.add(myCell);
 
   const oppActions = parseActionsFromString(data.oppOrders, map);
-  oppActions.forEach(action => updatePossibleCells(oppCells, action, map));
+  oppActions.forEach(action => {
+    oppCells = getPossibleCells(oppCells, action, map);
+  });
 
   const validDirections = getValidDirections(myCell, visited);
   const validActions = getAllValidActions({
@@ -51,14 +54,17 @@ while (true) {
   }));
   const actions = decideActions(actionErrors);
 
-  console.error(
-    "OppCells",
-    Array.from(oppCells).map(cell => getCoords(cell)),
+  actions.forEach(updateCounts);
+  actions.forEach(action => {
+    myCells = getPossibleCells(myCells, action, map);
+  });
+
+  console.error({
+    oppCells: Array.from(oppCells).map(cell => getCoords(cell)),
+    myCells: Array.from(myCells).map(cell => getCoords(cell)),
     actionErrors,
     charges
-  );
-
-  actions.forEach(updateCounts);
+  });
   executeActions(actions);
 }
 

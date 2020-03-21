@@ -1,6 +1,7 @@
 import { TORPEDO_RANGE } from "./constants";
 import { getCellsWithinRange } from "./cell-utils";
 import { getCoords } from "./map";
+import { getSector } from "./sectors";
 import { parseBase10 } from "./math-utils";
 
 type Params = {
@@ -21,7 +22,7 @@ export function getAllValidActions({
     direction,
     charge: "TORPEDO"
   }));
-  const surfaceAction: Action = { type: "SURFACE" };
+  const surfaceAction: Action = { type: "SURFACE", sector: getSector(myCell) };
 
   const deviceActions: Action[] = [];
   if (charges.TORPEDO >= 3) {

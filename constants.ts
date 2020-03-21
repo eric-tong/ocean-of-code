@@ -12,7 +12,7 @@ declare global {
         charge?: Device;
       }
     | { type: "TORPEDO"; cell: Cell }
-    | { type: "SURFACE"; sector?: number }
+    | { type: "SURFACE"; sector: number }
     | { type: "SILENCE"; direction?: Direction; distance?: number };
   type Errors = {
     mse: number;

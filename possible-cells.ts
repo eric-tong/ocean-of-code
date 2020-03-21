@@ -3,19 +3,19 @@ import { DIRECTIONS, SILENCE_RANGE, TORPEDO_RANGE } from "./constants";
 import { getCellsInSector } from "./sectors";
 import { getCellsWithinRange } from "./cell-utils";
 
-export function updatePossibleCells(
-  set: Set<Cell>,
+export function getPossibleCells(
+  prevSet: Set<Cell>,
   action: Action,
   map: CellMap
 ) {
-  const newCells: Cell[] = [];
-  const oldCells = Array.from(set.values());
+  const newCells = new Set<Cell>();
+  const oldCells = Array.from(prevSet.values());
   switch (action.type) {
     case "MOVE":
       const directionIndex = DIRECTIONS.indexOf(action.direction);
       oldCells.forEach(cell => {
         const newCell = cell[directionIndex];
-        if (newCell) newCells.push(newCell);
+        if (newCell) newCells.add(newCell);
       });
       break;
     case "TORPEDO":
@@ -23,7 +23,7 @@ export function updatePossibleCells(
         getCellsWithinRange(action.cell, TORPEDO_RANGE)
       );
       oldCells.forEach(cell => {
-        if (cellsWithinRange.has(cell)) newCells.push(cell);
+        if (cellsWithinRange.has(cell)) newCells.add(cell);
       });
       break;
     case "SURFACE":
@@ -31,12 +31,12 @@ export function updatePossibleCells(
 
       const cellsInSector = getCellsInSector(action.sector, map);
       oldCells.forEach(cell => {
-        if (cellsInSector.has(cell)) newCells.push(cell);
+        if (cellsInSector.has(cell)) newCells.add(cell);
       });
       break;
     case "SILENCE":
       oldCells.forEach(origin => {
-        newCells.push(origin);
+        newCells.add(origin);
         for (
           let directionIndex = 0;
           directionIndex < DIRECTIONS.length;
@@ -46,7 +46,7 @@ export function updatePossibleCells(
           for (let distance = 1; distance < SILENCE_RANGE; distance++) {
             const newCell = cell[directionIndex];
             if (newCell) {
-              newCells.push(newCell);
+              newCells.add(newCell);
             } else {
               break;
             }
@@ -58,6 +58,5 @@ export function updatePossibleCells(
       console.error(action);
       throw new Error("Invalid action to update possible cells");
   }
-  set.clear();
-  newCells.forEach(cell => set.add(cell));
+  return newCells;
 }
