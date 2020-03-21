@@ -24,6 +24,7 @@ export function getErrors(
 
       const mse = getMeanSquaredError(testCell, Array.from(oppCells.values()));
       return {
+        mse,
         mseGain: mse - currentMse,
         oppKnowledgeGain
       };

@@ -27,10 +27,15 @@ function getMinErrorAction(actionErrors: { action: Action; errors: Errors }[]) {
 }
 
 function getTotalError({
+  mse = Number.MAX_SAFE_INTEGER,
   mseGain = 0,
   oppHealth = 0,
   myDamage = 0,
   oppKnowledgeGain = 0
 }: Errors) {
-  return mseGain + oppHealth * 10 + myDamage * 10 + oppKnowledgeGain;
+  const IDEAL_MSE = 9;
+  const idealMseError = mse < IDEAL_MSE ? IDEAL_MSE - mse : 0;
+  return (
+    idealMseError + mseGain + oppHealth * 10 + myDamage * 10 + oppKnowledgeGain
+  );
 }
