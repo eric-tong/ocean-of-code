@@ -1,9 +1,6 @@
 import { getCoords } from "./map";
 
-export function getMeanSquaredError(
-  origin: Cell,
-  testCells: IterableIterator<Cell>
-) {
+export function getMeanSquaredError(origin: Cell, testCells: Cell[]) {
   const originCoords = getCoords(origin);
 
   let error = 0;

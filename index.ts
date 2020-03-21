@@ -6,6 +6,7 @@ import { getMinErrorDirection } from "./direction";
 import { getOppCells } from "./opponent";
 import { getStartPosition } from "./start-position";
 import { parseBase10 } from "./math-utils";
+import { updatePossibleCells } from "./possible-cells";
 
 // @ts-ignore
 const [width, height, myId]: number[] = readline()
@@ -26,11 +27,11 @@ while (true) {
   visited.add(myCell);
 
   const oppActions = parseActionsFromString(data.oppOrders);
-  console.error(oppActions);
+  //   oppActions.forEach(action => updatePossibleCells(oppCells, action));
 
   const minErrorDirection = getMinErrorDirection(
     myCell,
-    oppCells.values(),
+    Array.from(oppCells.values()),
     visited
   );
   let action: Action | undefined;

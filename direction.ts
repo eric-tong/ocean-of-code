@@ -3,7 +3,7 @@ import { getMeanSquaredError } from "./cell-utils";
 
 export function getMinErrorDirection(
   origin: (Cell | undefined)[],
-  testCells: IterableIterator<Cell>,
+  testCells: Cell[],
   invalidCells: Set<Cell>
 ) {
   let minError = Number.MAX_SAFE_INTEGER;
