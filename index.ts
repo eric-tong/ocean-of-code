@@ -1,4 +1,5 @@
-import { executeAction } from "./action";
+import { executeAction, parseActionFromString } from "./action";
+
 import { getData } from "./data";
 import { getMap } from "./map";
 import { getMinErrorDirection } from "./direction";
@@ -23,6 +24,8 @@ while (true) {
   const myCell = map[data.x][data.y];
   if (!myCell) throw new Error("My cell is empty");
   visited.add(myCell);
+
+  const oppActions = data.oppOrders.split("|").map(parseActionFromString);
 
   const minErrorDirection = getMinErrorDirection(
     myCell,

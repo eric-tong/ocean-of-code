@@ -1,6 +1,10 @@
 import { parseBase10 } from "./math-utils";
 
 export function getData() {
+  // @ts-ignore
+  const numericalData: number[] = readline()
+    .split(" ")
+    .map(parseBase10);
   const [
     x,
     y,
@@ -10,14 +14,11 @@ export function getData() {
     sonarCooldown,
     silenceCooldown,
     mineCooldown
-    // @ts-ignore
-  ] = readline()
-    .split(" ")
-    .map(parseBase10);
+  ] = numericalData;
   // @ts-ignore
-  const sonarResult = readline();
+  const sonarResult: string = readline();
   // @ts-ignore
-  const oppOrders = readline();
+  const oppOrders: string = readline();
 
   return {
     x,
