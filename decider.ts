@@ -27,10 +27,10 @@ function getMinErrorAction(actionErrors: { action: Action; errors: Errors }[]) {
 }
 
 function getTotalError({
-  mseGain: mse,
-  oppHealth,
-  myDamage,
-  oppKnowledgeGain: oppKnowledge
+  mseGain = 0,
+  oppHealth = 0,
+  myDamage = 0,
+  oppKnowledgeGain = 0
 }: Errors) {
-  return mse + oppHealth * 10 + myDamage * 10 + oppKnowledge;
+  return mseGain + oppHealth * 10 + myDamage * 10 + oppKnowledgeGain;
 }

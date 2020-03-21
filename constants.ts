@@ -15,10 +15,10 @@ declare global {
     | { type: "SURFACE"; sector: number }
     | { type: "SILENCE"; direction?: Direction; distance?: number };
   type Errors = {
-    mseGain: number;
-    oppHealth: number;
-    myDamage: number;
-    oppKnowledgeGain: number;
+    mseGain?: number;
+    oppHealth?: number;
+    myDamage?: number;
+    oppKnowledgeGain?: number;
   };
   type Charges = { TORPEDO: number };
 }

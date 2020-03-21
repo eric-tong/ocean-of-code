@@ -15,7 +15,7 @@ export function getErrors(
 ): Errors {
   const currentMse = getMeanSquaredError(myCell, Array.from(oppCells.values()));
   const newMyCells = getPossibleCells(myCells, action, map);
-  const oppKnowledge = myCells.size - newMyCells.size;
+  const oppKnowledgeGain = myCells.size - newMyCells.size;
   switch (action.type) {
     case "MOVE":
       const directionIndex = DIRECTIONS.indexOf(action.direction);
@@ -25,23 +25,21 @@ export function getErrors(
       const mse = getMeanSquaredError(testCell, Array.from(oppCells.values()));
       return {
         mseGain: mse - currentMse,
-        oppHealth: 0,
-        myDamage: 0,
-        oppKnowledgeGain: oppKnowledge
+        oppKnowledgeGain
       };
     case "TORPEDO":
       return {
         mseGain: 0,
         oppHealth: getMeanOppDamage(action.cell, oppCells) * -1,
         myDamage: getMyDamage(action.cell, myCell),
-        oppKnowledgeGain: oppKnowledge
+        oppKnowledgeGain
       };
     case "SURFACE":
       return {
         mseGain: 0,
         oppHealth: 0,
         myDamage: 1,
-        oppKnowledgeGain: oppKnowledge
+        oppKnowledgeGain
       };
     default:
       throw new Error("Invalid action for finding error");
