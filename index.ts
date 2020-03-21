@@ -27,7 +27,7 @@ const startPosition = getStartPosition(map);
 console.log(`${startPosition.x} ${startPosition.y}`);
 
 const visited = new Set<Cell>();
-const charges: Charges = { TORPEDO: 0 };
+const charges: Charges = { TORPEDO: 0, SONAR: 0, SILENCE: 0 };
 
 while (true) {
   const data = getData();
@@ -75,7 +75,10 @@ function updateCounts(action: Action) {
       break;
     case "MOVE":
       if (action.charge) {
-        const chargeAmount = Math.min(MAX_CHARGE, charges[action.charge] + 1);
+        const chargeAmount = Math.min(
+          MAX_CHARGE[action.charge],
+          charges[action.charge] + 1
+        );
         charges[action.charge] = chargeAmount;
       }
       break;

@@ -31,11 +31,17 @@ function getTotalError({
   mseGain = 0,
   oppHealth = 0,
   myDamage = 0,
-  oppKnowledgeGain = 0
+  oppKnowledgeGain = 0,
+  myKnowledgeLoss = 0
 }: Errors) {
   const IDEAL_MSE = 9;
   const idealMseError = mse < IDEAL_MSE ? IDEAL_MSE - mse : 0;
   return (
-    idealMseError + mseGain + oppHealth * 10 + myDamage * 10 + oppKnowledgeGain
+    idealMseError +
+    mseGain +
+    oppHealth * 10 +
+    myDamage * 10 +
+    oppKnowledgeGain +
+    myKnowledgeLoss
   );
 }

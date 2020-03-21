@@ -45,3 +45,8 @@ export function getCellsInSector(sector: number, map: CellMap) {
   }
   return cellsInSector;
 }
+
+export function countSectors(cells: Set<Cell>) {
+  const sectors = Array.from(cells.values()).map(cell => getSector(cell));
+  return new Set(sectors).size;
+}

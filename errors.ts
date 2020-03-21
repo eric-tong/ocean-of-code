@@ -1,4 +1,6 @@
-import { DIRECTIONS } from "./constants";
+import { DIRECTIONS, MAX_CHARGE } from "./constants";
+
+import { countSectors } from "./sectors";
 import { getMeanSquaredError } from "./cell-utils";
 import { getPossibleCells } from "./possible-cells";
 
@@ -21,13 +23,36 @@ export function getErrors(
       const directionIndex = DIRECTIONS.indexOf(action.direction);
       const testCell = myCell[directionIndex];
       if (!testCell) throw new Error("Invalid test cell");
-
       const mse = getMeanSquaredError(testCell, Array.from(oppCells.values()));
-      return {
+      const errors = {
         mse,
         mseGain: mse - currentMse,
-        oppKnowledgeGain
+        oppKnowledgeGain,
+        myKnowledgeLoss: 0,
+        oppHealth: 0
       };
+      switch (action.charge) {
+        case "TORPEDO":
+          const meanDamage = 5 / oppCells.size;
+          errors.oppHealth -= meanDamage / MAX_CHARGE.TORPEDO;
+          break;
+        case "SILENCE":
+          const cellsAfterSilence = getPossibleCells(
+            newMyCells,
+            { type: "SILENCE" },
+            map
+          );
+          const oppKnowledgeGain = newMyCells.size - cellsAfterSilence.size;
+          errors.oppKnowledgeGain -= oppKnowledgeGain / MAX_CHARGE.SILENCE;
+          break;
+        case "SONAR":
+          const sectorCount = countSectors(oppCells);
+          const myKnowledgeAfterSonar = oppCells.size / sectorCount;
+          const myKnowledgeLoss = oppCells.size - myKnowledgeAfterSonar;
+          errors.myKnowledgeLoss -= myKnowledgeLoss / MAX_CHARGE.SONAR;
+          break;
+      }
+      return errors;
     case "TORPEDO":
       return {
         mseGain: 0,

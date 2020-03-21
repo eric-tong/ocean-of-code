@@ -1,4 +1,5 @@
-import { TORPEDO_RANGE } from "./constants";
+import { DEVICES, MAX_CHARGE, TORPEDO_RANGE } from "./constants";
+
 import { getCellsWithinRange } from "./cell-utils";
 import { getCoords } from "./map";
 import { getSector } from "./sectors";
@@ -17,24 +18,34 @@ export function getAllValidActions({
   oppCells,
   myCell
 }: Params) {
-  const moveActions: Action[] = validDirections.map(direction => ({
-    type: "MOVE",
-    direction,
-    charge: "TORPEDO"
-  }));
-  const surfaceAction: Action = { type: "SURFACE", sector: getSector(myCell) };
+  const actions: Action[] = [];
+  const unchargedDevices = DEVICES.filter(
+    device => charges[device] < MAX_CHARGE[device]
+  );
+  for (const device of [...unchargedDevices, undefined]) {
+    const moveActions: Action[] = validDirections.map(direction => ({
+      type: "MOVE",
+      direction,
+      charge: device
+    }));
+    actions.push(...moveActions);
+  }
+  const surfaceAction: Action = {
+    type: "SURFACE",
+    sector: getSector(myCell)
+  };
+  actions.push(surfaceAction);
 
-  const deviceActions: Action[] = [];
-  if (charges.TORPEDO >= 3) {
+  if (charges.TORPEDO >= MAX_CHARGE.TORPEDO) {
     const cellsInRange = getCellsWithinRange(myCell, TORPEDO_RANGE);
     for (const cell of cellsInRange.values()) {
       if (oppCells.has(cell)) {
-        deviceActions.push({ type: "TORPEDO", cell });
+        actions.push({ type: "TORPEDO", cell });
       }
     }
   }
 
-  return [...moveActions, ...deviceActions, surfaceAction];
+  return actions;
 }
 
 export function executeActions(actions: Action[]) {
@@ -91,6 +102,8 @@ function parseActionFromString(
       return;
     case "SILENCE":
       return { type };
+    case "MINE":
+      // TODO Handle mines
       return;
     case "NA":
       return;
