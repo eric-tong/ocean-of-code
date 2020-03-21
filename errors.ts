@@ -17,15 +17,16 @@ export function getErrors(
       if (!testCell) throw new Error("Invalid test cell");
 
       const mse = getMeanSquaredError(testCell, Array.from(oppCells.values()));
-      return { mse, oppHealth: 0, oppKnowledge: 1 };
+      return { mse, oppHealth: 0, myDamage: 0, oppKnowledge: 1 };
     case "TORPEDO":
       return {
         mse: 0,
         oppHealth: getMeanOppDamage(action.cell, oppCells) * -1,
+        myDamage: getMyDamage(action.cell, myCell),
         oppKnowledge: 5
       };
     case "SURFACE":
-      return { mse: 0, oppHealth: 0, oppKnowledge: 1000 };
+      return { mse: 0, oppHealth: 0, myDamage: 0, oppKnowledge: 1000 };
     default:
       throw new Error("Invalid action for finding error");
   }
@@ -40,4 +41,10 @@ function getMeanOppDamage(torpedoCell: Cell, oppCells: Set<Cell>) {
     count++;
   }
   return totalDamage / count;
+}
+
+function getMyDamage(torpedoCell: Cell, myCell: Cell) {
+  if (torpedoCell === myCell) return 2;
+  else if (torpedoCell.indexOf(myCell) > -1) return 1;
+  else return 0;
 }

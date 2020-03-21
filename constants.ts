@@ -13,7 +13,12 @@ declare global {
       }
     | { type: "TORPEDO"; cell: Cell }
     | { type: "SURFACE"; sector?: number };
-  type Errors = { mse: number; oppHealth: number; oppKnowledge: number };
+  type Errors = {
+    mse: number;
+    oppHealth: number;
+    myDamage: number;
+    oppKnowledge: number;
+  };
   type Charges = { TORPEDO: number };
 }
 

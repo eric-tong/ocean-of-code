@@ -26,6 +26,6 @@ function getMinErrorAction(actionErrors: { action: Action; errors: Errors }[]) {
   return minErrorAction;
 }
 
-function getTotalError({ mse, oppHealth, oppKnowledge }: Errors) {
-  return mse + oppHealth * 10 + oppKnowledge;
+function getTotalError({ mse, oppHealth, myDamage, oppKnowledge }: Errors) {
+  return mse + oppHealth * 10 + myDamage * 10 + oppKnowledge;
 }
