@@ -33,15 +33,19 @@ const oppCells = getOppCells(map);
 const startPosition = getStartPosition(map);
 console.log(`${startPosition.x} ${startPosition.y}`);
 
+const visited = new Set<Cell>();
+
 while (true) {
   const data = getData();
   const myCell = map[data.x][data.y];
   if (!myCell) throw new Error("My cell is empty");
+  visited.add(myCell);
 
   let minError = Number.MAX_SAFE_INTEGER;
   let minErrorDirection: Direction | undefined;
   myCell.forEach((neighbor, directionIndex) => {
-    if (!neighbor) return;
+    console.error({ neighbor, directionIndex });
+    if (!neighbor || visited.has(neighbor)) return;
     const error = getMeanSquaredError(neighbor, oppCells.values());
     if (error < minError) {
       minError = error;
@@ -51,9 +55,10 @@ while (true) {
 
   let action: Action | undefined;
   if (minErrorDirection)
-    action = { type: "MOVE", direction: "N", charge: "TORPEDO" };
+    action = { type: "MOVE", direction: minErrorDirection, charge: "TORPEDO" };
   else {
     action = { type: "SURFACE" };
+    visited.clear();
   }
   executeAction(action);
 }
