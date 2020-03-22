@@ -76,7 +76,6 @@ while (true) {
     myLife: data.myLife
   });
 
-  if (!myCells.has(myCell)) throw new Error("MyCells prediction failure");
   actions.forEach(action => action.updateCounts(charges, record, myCell));
   actions.forEach(action => {
     if (action.type !== "SONAR") myCells = action.getNewPossibleCells(myCells);
