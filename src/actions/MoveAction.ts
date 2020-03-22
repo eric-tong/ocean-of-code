@@ -1,4 +1,4 @@
-import { DIRECTIONS, MAX_CHARGE } from "../mechanics/constants";
+import { DEVICES, DIRECTIONS, MAX_CHARGE } from "../mechanics/constants";
 
 import SilenceAction from "./SilenceAction";
 import { getMeanSquaredError } from "../utils/cell-utils";
@@ -77,6 +77,18 @@ export default class MoveAction implements Action {
       if (newCell) newCells.add(newCell);
     });
     return newCells;
+  }
+
+  getValidActions({ charges, validDirections }: GetValidActionsParams) {
+    const unchargedDevices = DEVICES.filter(
+      device => charges[device] < MAX_CHARGE[device]
+    );
+    for (const device of [...unchargedDevices, undefined]) {
+      return validDirections.map(
+        direction => new MoveAction(direction, device)
+      );
+    }
+    return [];
   }
 
   updateCounts(charges: Charges, _: any): void {

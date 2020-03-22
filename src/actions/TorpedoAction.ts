@@ -1,4 +1,5 @@
-import { TORPEDO_RANGE } from "../mechanics/constants";
+import { MAX_CHARGE, TORPEDO_RANGE } from "../mechanics/constants";
+
 import { getCellsWithinRange } from "../utils/cell-utils";
 import { getCoords } from "../utils/map";
 import { parseBase10 } from "../utils/math-utils";
@@ -43,6 +44,19 @@ export default class TorpedoAction implements Action {
       if (cellsWithinRange.has(cell)) newCells.add(cell);
     });
     return newCells;
+  }
+
+  getValidActions({ charges, oppCells, myCell }: GetValidActionsParams) {
+    const validActions = [];
+    if (charges.TORPEDO >= MAX_CHARGE.TORPEDO) {
+      const cellsInRange = getCellsWithinRange(myCell, TORPEDO_RANGE);
+      for (const cell of cellsInRange.values()) {
+        if (oppCells.has(cell)) {
+          validActions.push(new TorpedoAction(cell));
+        }
+      }
+    }
+    return validActions;
   }
 
   updateCounts(charges: Charges, _: any): void {

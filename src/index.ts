@@ -2,7 +2,7 @@ import {
   executeActions,
   getAllValidActions,
   parseActionsFromString
-} from "./utils/action-utils";
+} from "./actions/Actions";
 import { getCoords, getMap, getSet } from "./utils/map";
 
 import SonarAction from "./actions/SonarAction";

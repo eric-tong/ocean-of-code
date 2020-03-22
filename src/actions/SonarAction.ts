@@ -1,4 +1,6 @@
-import { getSector } from "../mechanics/sectors";
+import { getSector, uniqueSectors } from "../mechanics/sectors";
+
+import { MAX_CHARGE } from "../mechanics/constants";
 import { parseBase10 } from "../utils/math-utils";
 
 export default class SonarAction implements Action {
@@ -48,6 +50,17 @@ export default class SonarAction implements Action {
       }
     }
     return newCells;
+  }
+
+  getValidActions({ charges, oppCells, prevCell }: GetValidActionsParams) {
+    if (charges.SONAR >= MAX_CHARGE.SONAR) {
+      const sectors = uniqueSectors(oppCells);
+      return sectors.map(
+        sector =>
+          new SonarAction(sector, !!prevCell && sector === getSector(prevCell))
+      );
+    }
+    return [];
   }
 
   updateCounts(charges: Charges, record: any): void {

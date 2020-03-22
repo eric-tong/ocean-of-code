@@ -38,6 +38,10 @@ export default class SilenceAction implements Action {
     return newCells;
   }
 
+  getValidActions({ charges, validDirections }: GetValidActionsParams) {
+    return [];
+  }
+
   updateCounts(charges: Charges, record: any): void {
     record.visited.clear();
   }

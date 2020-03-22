@@ -40,6 +40,10 @@ export default class SurfaceAction implements Action {
     return newCells;
   }
 
+  getValidActions({ myCell }: GetValidActionsParams) {
+    return [new SurfaceAction(getSector(myCell))];
+  }
+
   updateCounts(_: Charges, record: any): void {
     record.visited.clear();
   }

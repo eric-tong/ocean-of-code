@@ -27,12 +27,20 @@ declare global {
     oppCells: Set<Cell>;
     map: CellMap;
   };
+  type GetValidActionsParams = {
+    validDirections: Direction[];
+    charges: Charges;
+    myCell: Cell;
+    prevCell?: Cell;
+    oppCells: Set<Cell>;
+  };
   interface Action {
     readonly type: "MOVE" | "SURFACE" | Device;
     toActionString(): string;
     fromActionString(params: string[], map: CellMap, prevCell: Cell): Action;
     getErrors(params: GetErrorsParams): Errors;
     getNewPossibleCells(oldCells: Set<Cell>): Set<Cell>;
+    getValidActions(params: GetValidActionsParams): Action[];
     updateCounts(charges: Charges, record: MovementRecord): void;
   }
 }

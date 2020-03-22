@@ -19,7 +19,28 @@ const TYPE_TO_ACTION = new Map<String, Action>(
   ACTIONS.map(action => [action.type, action])
 );
 
-export function parseActionFromString(
+export function getAllValidActions(params: GetValidActionsParams) {
+  const validActions = [];
+  for (const action of ACTIONS) {
+    validActions.push(...action.getValidActions(params));
+  }
+  return validActions;
+}
+
+export function parseActionsFromString(
+  actionsString: string,
+  map: CellMap,
+  prevCell: Cell
+) {
+  const actions = [];
+  for (const actionString of actionsString.split("|")) {
+    const action = parseActionFromString(actionString, map, prevCell);
+    if (action) actions.push(action);
+  }
+  return actions;
+}
+
+function parseActionFromString(
   actionString: string,
   map: CellMap,
   prevCell: Cell
@@ -27,4 +48,9 @@ export function parseActionFromString(
   const [type, ...params] = actionString.split(" ");
   const action = TYPE_TO_ACTION.get(type);
   if (action) return action.fromActionString(params, map, prevCell);
+}
+
+export function executeActions(actions: Action[]) {
+  const actionStrings = actions.map(action => action.toActionString());
+  console.log(actionStrings.join("|"));
 }
