@@ -43,4 +43,9 @@ export default class SonarAction implements Action {
     }
     return newCells;
   }
+
+  updateCounts(charges: Charges, record: any): void {
+    record.lastSonarSector = this.sector;
+    charges.SONAR = 0;
+  }
 }

@@ -36,6 +36,10 @@ export default class TorpedoAction implements Action {
     });
     return newCells;
   }
+
+  updateCounts(charges: Charges, record: any): void {
+    charges.TORPEDO = 0;
+  }
 }
 
 function getMeanOppDamage(torpedoCell: Cell, oppCells: Set<Cell>) {

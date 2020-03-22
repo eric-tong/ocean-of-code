@@ -28,22 +28,23 @@ let myCells = getOppCells(map);
 const startPosition = getStartPosition(map);
 console.log(`${startPosition.x} ${startPosition.y}`);
 
-const visited = new Set<Cell>();
 const charges: Charges = { TORPEDO: 0, SONAR: 0, SILENCE: 0 };
-
-let lastSonarSector = -1;
-let prevCell: Cell | undefined = undefined;
+const record: MovementRecord = {
+  lastSonarSector: -1,
+  prevCell: undefined,
+  visited: new Set<Cell>()
+};
 
 while (true) {
   const data = getData();
   const myCell = map[data.x][data.y];
   if (!myCell) throw new Error("My cell is empty");
-  visited.add(myCell);
+  record.visited.add(myCell);
 
   if (data.sonarResult !== "NA") {
     oppCells = getPossibleCells(
       oppCells,
-      new SonarAction(lastSonarSector, data.sonarResult === "Y")
+      new SonarAction(record.lastSonarSector, data.sonarResult === "Y")
     );
   }
 
@@ -56,12 +57,12 @@ while (true) {
     }
   });
 
-  const validDirections = getValidDirections(myCell, visited);
+  const validDirections = getValidDirections(myCell, record.visited);
   const validActions = getAllValidActions({
     validDirections,
     charges,
     myCell,
-    prevCell,
+    prevCell: record.prevCell,
     oppCells
   });
   const params = { myCell, myCells, oppCells, map };
@@ -71,11 +72,11 @@ while (true) {
   }));
   const actions = decideActions(actionErrors);
 
-  actions.forEach(updateCounts);
+  actions.forEach(action => action.updateCounts(charges, record));
   actions.forEach(action => {
     if (action.type !== "SONAR") myCells = getPossibleCells(myCells, action);
   });
-  prevCell = myCell;
+  record.prevCell = myCell;
 
   console.error(
     Array.from(oppCells).map(cell => getCoords(cell)),
@@ -84,28 +85,4 @@ while (true) {
     charges
   );
   executeActions(actions);
-}
-
-function updateCounts(action: Action) {
-  switch (action.type) {
-    case "SURFACE":
-      visited.clear();
-      break;
-    case "MOVE":
-      if (action.charge) {
-        const chargeAmount = Math.min(
-          MAX_CHARGE[action.charge],
-          charges[action.charge] + 1
-        );
-        charges[action.charge] = chargeAmount;
-      }
-      break;
-    case "TORPEDO":
-      charges.TORPEDO = 0;
-      break;
-    case "SONAR":
-      lastSonarSector = action.sector;
-      charges.SONAR = 0;
-      break;
-  }
 }

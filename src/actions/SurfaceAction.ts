@@ -32,4 +32,8 @@ export default class SurfaceAction implements Action {
     });
     return newCells;
   }
+
+  updateCounts(charges: Charges, record: any): void {
+    record.visited.clear();
+  }
 }

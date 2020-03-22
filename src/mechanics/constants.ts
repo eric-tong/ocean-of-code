@@ -13,7 +13,13 @@ declare global {
     oppKnowledgeGain?: number;
     myKnowledgeLoss?: number;
   };
+
   type Charges = { TORPEDO: number; SONAR: number; SILENCE: number };
+  type MovementRecord = {
+    lastSonarSector: number;
+    prevCell?: Cell;
+    visited: Set<Cell>;
+  };
 
   type GetErrorsParams = {
     myCell: Cell;
@@ -26,6 +32,7 @@ declare global {
     toActionString(): string;
     getErrors(params: GetErrorsParams): Errors;
     getNewPossibleCells(oldCells: Set<Cell>): Set<Cell>;
+    updateCounts(charges: Charges, record: MovementRecord): void;
   }
 }
 

@@ -73,4 +73,14 @@ export default class MoveAction implements Action {
     });
     return newCells;
   }
+
+  updateCounts(charges: Charges, record: any): void {
+    if (this.charge) {
+      const chargeAmount = Math.min(
+        MAX_CHARGE[this.charge],
+        charges[this.charge] + 1
+      );
+      charges[this.charge] = chargeAmount;
+    }
+  }
 }
