@@ -59,18 +59,7 @@ export function getAllValidActions({
 }
 
 export function executeActions(actions: Action[]) {
-  const actionStrings = [];
-  for (const action of actions)
-    switch (action.type) {
-      case "MOVE":
-      case "TORPEDO":
-      case "SURFACE":
-      case "SONAR":
-        actionStrings.push(action.toActionString());
-        break;
-      default:
-        throw new Error("Cannot excute action");
-    }
+  const actionStrings = actions.map(action => action.toActionString());
   console.log(actionStrings.join("|"));
 }
 
