@@ -5,16 +5,6 @@ declare global {
   type CellMap = (Cell | undefined)[][];
   type Direction = "N" | "E" | "S" | "W";
   type Device = "TORPEDO" | "SONAR" | "SILENCE";
-  type Action =
-    | {
-        type: "MOVE";
-        direction: Direction;
-        charge?: Device;
-      }
-    | { type: "TORPEDO"; cell: Cell }
-    | { type: "SURFACE"; sector: number }
-    | { type: "SONAR"; sector: number; inSector?: boolean }
-    | { type: "SILENCE"; direction?: Direction; distance?: number };
   type Errors = {
     mse?: number;
     mseGain?: number;
@@ -24,6 +14,19 @@ declare global {
     myKnowledgeLoss?: number;
   };
   type Charges = { TORPEDO: number; SONAR: number; SILENCE: number };
+
+  type GetErrorsParams = {
+    myCell: Cell;
+    myCells: Set<Cell>;
+    oppCells: Set<Cell>;
+    map: CellMap;
+  };
+  interface Action {
+    type: Device;
+    toActionString(): string;
+    getErrors(params: GetErrorsParams): Errors;
+    getNewPossibleCells(oldCells: Cell[]): Set<Cell>;
+  }
 }
 
 export const DIRECTIONS: Direction[] = ["N", "E", "S", "W"];

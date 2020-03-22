@@ -24,12 +24,7 @@ export function getPossibleCells(
       });
       break;
     case "TORPEDO":
-      const cellsWithinRange = new Set(
-        getCellsWithinRange(action.cell, TORPEDO_RANGE)
-      );
-      oldCells.forEach(cell => {
-        if (cellsWithinRange.has(cell)) newCells.add(cell);
-      });
+      action.getNewPossibleCells(oldCells).forEach(cell => newCells.add(cell));
       break;
     case "SURFACE":
       if (!action.sector) throw new Error("No sector provided");

@@ -1,8 +1,8 @@
 import { DEVICES, MAX_CHARGE, TORPEDO_RANGE } from "../mechanics/constants";
 import { getSector, uniqueSectors } from "../mechanics/sectors";
 
+import TorpedoAction from "../actions/TorpedoAction";
 import { getCellsWithinRange } from "./cell-utils";
-import { getCoords } from "./map";
 import { parseBase10 } from "./math-utils";
 
 type Params = {
@@ -40,7 +40,7 @@ export function getAllValidActions({
     const cellsInRange = getCellsWithinRange(myCell, TORPEDO_RANGE);
     for (const cell of cellsInRange.values()) {
       if (oppCells.has(cell)) {
-        actions.push({ type: "TORPEDO", cell });
+        actions.push(new TorpedoAction(cell));
       }
     }
   }
@@ -63,8 +63,7 @@ export function executeActions(actions: Action[]) {
         );
         break;
       case "TORPEDO":
-        const { x, y } = getCoords(action.cell);
-        actionStrings.push(`TORPEDO ${x} ${y}`);
+        actionStrings.push(action.toActionString());
         break;
       case "SURFACE":
         actionStrings.push("SURFACE");
@@ -101,7 +100,7 @@ function parseActionFromString(
       const [x, y] = payload.map(parseBase10);
       const cell = map[x][y];
       if (!cell) throw new Error("Torpedoed cell does not exist");
-      return { type, cell };
+      return new TorpedoAction(cell);
     case "SURFACE":
       const sector = parseBase10(payload[0]);
       return { type, sector };

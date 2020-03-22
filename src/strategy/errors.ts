@@ -19,6 +19,7 @@ export function getErrors(
   const newMyCells =
     action.type === "SONAR" ? myCells : getPossibleCells(myCells, action, map);
   const oppKnowledgeGain = myCells.size - newMyCells.size;
+  const params = { myCell, myCells, oppCells, map };
   switch (action.type) {
     case "MOVE":
       const directionIndex = DIRECTIONS.indexOf(action.direction);
@@ -59,12 +60,7 @@ export function getErrors(
       }
       return errors;
     case "TORPEDO":
-      return {
-        mseGain: 0,
-        oppHealth: getMeanOppDamage(action.cell, oppCells) * -1,
-        myDamage: getMyDamage(action.cell, myCell),
-        oppKnowledgeGain
-      };
+      return action.getErrors(params);
     case "SONAR":
       let sectorCount = 0;
       let totalCount = 0;
@@ -90,21 +86,4 @@ export function getErrors(
     default:
       throw new Error("Invalid action for finding error");
   }
-}
-
-function getMeanOppDamage(torpedoCell: Cell, oppCells: Set<Cell>) {
-  let totalDamage = 0;
-  let count = 0;
-  for (const oppCell of oppCells) {
-    if (torpedoCell === oppCell) totalDamage += 2;
-    else if (torpedoCell.indexOf(oppCell) > -1) totalDamage += 1;
-    count++;
-  }
-  return totalDamage / count;
-}
-
-function getMyDamage(torpedoCell: Cell, myCell: Cell) {
-  if (torpedoCell === myCell) return 2;
-  else if (torpedoCell.indexOf(myCell) > -1) return 1;
-  else return 0;
 }
