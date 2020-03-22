@@ -76,7 +76,7 @@ export default class SilenceAction implements Action {
     return newCells;
   }
 
-  getValidActions({ charges, myCell }: GetValidActionsParams) {
+  getValidActions({ charges, myCell, visited }: GetValidActionsParams) {
     if (charges.SILENCE < MAX_CHARGE.SILENCE) return [];
 
     const validActions: SilenceAction[] = [new SilenceAction("N", 0)];
@@ -89,7 +89,7 @@ export default class SilenceAction implements Action {
       let cell: Cell | undefined = myCell;
       for (let distance = 1; distance <= SILENCE_RANGE; distance++) {
         cell = cell[directionIndex];
-        if (cell) {
+        if (cell && !visited.has(cell)) {
           validActions.push(
             new SilenceAction(DIRECTIONS[directionIndex], distance)
           );
@@ -101,7 +101,17 @@ export default class SilenceAction implements Action {
     return validActions;
   }
 
-  updateCounts(charges: Charges): void {
+  updateCounts(charges: Charges, record: MovementRecord, myCell: Cell): void {
     charges.SILENCE = 0;
+    if (!this.direction || typeof this.distance === "undefined")
+      throw new Error("Undefined distance");
+    const directionIndex = DIRECTIONS.indexOf(this.direction);
+    let visitedCell = myCell;
+    for (let distance = 1; distance < this.distance; distance++) {
+      const neighbor = visitedCell[directionIndex];
+      if (!neighbor) throw new Error("Invalid traversal path");
+      visitedCell = neighbor;
+      record.visited.add(neighbor);
+    }
   }
 }

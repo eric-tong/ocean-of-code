@@ -62,6 +62,7 @@ while (true) {
     charges,
     myCell,
     prevCell: record.prevCell,
+    visited: record.visited,
     oppCells
   });
   const actionErrors = validActions.map(action => ({
@@ -71,7 +72,7 @@ while (true) {
   const actions = decideActions(actionErrors);
 
   if (!myCells.has(myCell)) throw new Error("MyCells prediction failure");
-  actions.forEach(action => action.updateCounts(charges, record));
+  actions.forEach(action => action.updateCounts(charges, record, myCell));
   actions.forEach(action => {
     if (action.type !== "SONAR") myCells = action.getNewPossibleCells(myCells);
   });

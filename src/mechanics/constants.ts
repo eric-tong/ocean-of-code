@@ -33,6 +33,7 @@ declare global {
     myCell: Cell;
     prevCell?: Cell;
     oppCells: Set<Cell>;
+    visited: Set<Cell>;
   };
   interface Action {
     readonly type: "MOVE" | "SURFACE" | Device;
@@ -41,7 +42,7 @@ declare global {
     getErrors(params: GetErrorsParams): Errors;
     getNewPossibleCells(oldCells: Set<Cell>): Set<Cell>;
     getValidActions(params: GetValidActionsParams): Action[];
-    updateCounts(charges: Charges, record: MovementRecord): void;
+    updateCounts(charges: Charges, record: MovementRecord, myCell: Cell): void;
   }
 }
 
