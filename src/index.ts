@@ -69,7 +69,7 @@ while (true) {
     action,
     errors: action.getErrors({ myCell, myCells, oppCells, map })
   }));
-  const actions = decideActions(actionErrors);
+  const actions = decideActions(actionErrors, { myCells });
 
   if (!myCells.has(myCell)) throw new Error("MyCells prediction failure");
   actions.forEach(action => action.updateCounts(charges, record, myCell));
