@@ -22,10 +22,10 @@ declare global {
     map: CellMap;
   };
   interface Action {
-    type: Device;
+    readonly type: "MOVE" | "SURFACE" | Device;
     toActionString(): string;
     getErrors(params: GetErrorsParams): Errors;
-    getNewPossibleCells(oldCells: Cell[]): Set<Cell>;
+    getNewPossibleCells(oldCells: Set<Cell>): Set<Cell>;
   }
 }
 

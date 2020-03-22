@@ -1,6 +1,7 @@
 import { DEVICES, MAX_CHARGE, TORPEDO_RANGE } from "../mechanics/constants";
 import { getSector, uniqueSectors } from "../mechanics/sectors";
 
+import MoveAction from "../actions/MoveAction";
 import TorpedoAction from "../actions/TorpedoAction";
 import { getCellsWithinRange } from "./cell-utils";
 import { parseBase10 } from "./math-utils";
@@ -23,11 +24,9 @@ export function getAllValidActions({
     device => charges[device] < MAX_CHARGE[device]
   );
   for (const device of [...unchargedDevices, undefined]) {
-    const moveActions: Action[] = validDirections.map(direction => ({
-      type: "MOVE",
-      direction,
-      charge: device
-    }));
+    const moveActions: Action[] = validDirections.map(
+      direction => new MoveAction(direction, device)
+    );
     actions.push(...moveActions);
   }
   const surfaceAction: Action = {
@@ -58,10 +57,6 @@ export function executeActions(actions: Action[]) {
   for (const action of actions)
     switch (action.type) {
       case "MOVE":
-        actionStrings.push(
-          `MOVE ${action.direction} ${action.charge ? action.charge : ""}`
-        );
-        break;
       case "TORPEDO":
         actionStrings.push(action.toActionString());
         break;
@@ -95,7 +90,7 @@ function parseActionFromString(
     case "MOVE":
       // @ts-ignore
       const [direction, charge]: [Direction, Device] = payload;
-      return { type, direction, charge };
+      return new MoveAction(direction, charge);
     case "TORPEDO":
       const [x, y] = payload.map(parseBase10);
       const cell = map[x][y];

@@ -4,7 +4,7 @@ import { getCoords } from "../utils/map";
 import { getPossibleCells } from "../strategy/possible-cells";
 
 export default class TorpedoAction implements Action {
-  type: Device = "TORPEDO";
+  readonly type = "TORPEDO";
   cell: Cell;
 
   constructor(cell: Cell) {
@@ -16,8 +16,8 @@ export default class TorpedoAction implements Action {
     return `TORPEDO ${x} ${y}`;
   }
 
-  getErrors({ myCell, myCells, oppCells, map }: GetErrorsParams) {
-    const newMyCells = getPossibleCells(myCells, this, map);
+  getErrors({ myCell, myCells, oppCells }: GetErrorsParams) {
+    const newMyCells = this.getNewPossibleCells(myCells);
     const oppKnowledgeGain = myCells.size - newMyCells.size;
     return {
       mseGain: 0,
@@ -27,7 +27,7 @@ export default class TorpedoAction implements Action {
     };
   }
 
-  getNewPossibleCells(oldCells: Cell[]): Set<Cell> {
+  getNewPossibleCells(oldCells: Set<Cell>): Set<Cell> {
     const newCells = new Set<Cell>();
     const cellsWithinRange = new Set(
       getCellsWithinRange(this.cell, TORPEDO_RANGE)
