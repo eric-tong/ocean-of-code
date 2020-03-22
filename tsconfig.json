@@ -4,5 +4,5 @@
     "target": "esnext",
     "lib": ["dom", "esnext"]
   },
-  "files": ["index.ts"]
+  "files": ["src/index.ts"]
 }

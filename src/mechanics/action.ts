@@ -1,9 +1,9 @@
 import { DEVICES, MAX_CHARGE, TORPEDO_RANGE } from "./constants";
 import { getSector, uniqueSectors } from "./sectors";
 
-import { getCellsWithinRange } from "./cell-utils";
-import { getCoords } from "./map";
-import { parseBase10 } from "./math-utils";
+import { getCellsWithinRange } from "../utils/cell-utils";
+import { getCoords } from "../utils/map";
+import { parseBase10 } from "../utils/math-utils";
 
 type Params = {
   validDirections: Direction[];

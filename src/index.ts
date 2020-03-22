@@ -2,18 +2,18 @@ import {
   executeActions,
   getAllValidActions,
   parseActionsFromString
-} from "./action";
-import { getCoords, getMap } from "./map";
+} from "./mechanics/action";
+import { getCoords, getMap } from "./utils/map";
 
-import { MAX_CHARGE } from "./constants";
-import { decideActions } from "./decider";
-import { getData } from "./data";
-import { getErrors } from "./errors";
-import { getOppCells } from "./opponent";
-import { getPossibleCells } from "./possible-cells";
-import { getStartPosition } from "./start-position";
-import { getValidDirections } from "./direction";
-import { parseBase10 } from "./math-utils";
+import { MAX_CHARGE } from "./mechanics/constants";
+import { decideActions } from "./strategy/decider";
+import { getData } from "./utils/data";
+import { getErrors } from "./strategy/errors";
+import { getOppCells } from "./utils/opponent";
+import { getPossibleCells } from "./strategy/possible-cells";
+import { getStartPosition } from "./strategy/start-position";
+import { getValidDirections } from "./mechanics/direction";
+import { parseBase10 } from "./utils/math-utils";
 
 // @ts-ignore
 const [width, height, myId]: number[] = readline()

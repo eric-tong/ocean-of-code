@@ -1,7 +1,7 @@
-import { DIRECTIONS, MAX_CHARGE } from "./constants";
-import { getSector, uniqueSectors } from "./sectors";
+import { DIRECTIONS, MAX_CHARGE } from ".././mechanics/constants";
+import { getSector, uniqueSectors } from "../mechanics/sectors";
 
-import { getMeanSquaredError } from "./cell-utils";
+import { getMeanSquaredError } from "../utils/cell-utils";
 import { getPossibleCells } from "./possible-cells";
 
 type Params = {

@@ -1,7 +1,11 @@
-import { DIRECTIONS, SILENCE_RANGE, TORPEDO_RANGE } from "./constants";
-import { getCellsInSector, getSector } from "./sectors";
+import {
+  DIRECTIONS,
+  SILENCE_RANGE,
+  TORPEDO_RANGE
+} from "../mechanics/constants";
+import { getCellsInSector, getSector } from "../mechanics/sectors";
 
-import { getCellsWithinRange } from "./cell-utils";
+import { getCellsWithinRange } from "../utils/cell-utils";
 
 export function getPossibleCells(
   prevSet: Set<Cell>,

@@ -1,6 +1,6 @@
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from "./constants";
 
-import { getCoords } from "./map";
+import { getCoords } from "../utils/map";
 
 export function getSector(
   cell: Cell,

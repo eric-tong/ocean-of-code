@@ -1,4 +1,3 @@
-import { TORPEDO_RANGE } from "./constants";
 import { getCoords } from "./map";
 
 type TestUnit = { distance: number; cell: Cell };
