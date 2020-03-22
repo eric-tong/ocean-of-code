@@ -80,15 +80,16 @@ export default class MoveAction implements Action {
   }
 
   getValidActions({ charges, validDirections }: GetValidActionsParams) {
+    const validActions: MoveAction[] = [];
     const unchargedDevices = DEVICES.filter(
       device => charges[device] < MAX_CHARGE[device]
     );
     for (const device of [...unchargedDevices, undefined]) {
-      return validDirections.map(
-        direction => new MoveAction(direction, device)
+      validActions.push(
+        ...validDirections.map(direction => new MoveAction(direction, device))
       );
     }
-    return [];
+    return validActions;
   }
 
   updateCounts(charges: Charges, _: any): void {
