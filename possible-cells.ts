@@ -43,11 +43,11 @@ export function getPossibleCells(
           directionIndex < DIRECTIONS.length;
           directionIndex++
         ) {
-          let cell = origin;
-          for (let distance = 1; distance < SILENCE_RANGE; distance++) {
-            const newCell = cell[directionIndex];
-            if (newCell) {
-              newCells.add(newCell);
+          let cell: Cell | undefined = origin;
+          for (let distance = 1; distance <= SILENCE_RANGE; distance++) {
+            cell = cell[directionIndex];
+            if (cell) {
+              newCells.add(cell);
             } else {
               break;
             }

@@ -37,8 +37,8 @@ function getTotalError({
   return (
     idealMseError +
     mseGain +
-    oppHealth * 10 +
-    myDamage * 10 +
+    oppHealth * 30 +
+    myDamage * 30 +
     oppKnowledgeGain +
     myKnowledgeLoss
   );
