@@ -12,11 +12,19 @@ export function decideActions(
   const firstActionError = actionTotalErrors.shift();
   if (!firstActionError) throw new Error("No available actions");
 
+  // TODO Allow SILENCE and move
   const actions: Action[] = [firstActionError.action];
   if (actionTotalErrors.length > 1) {
     const secondActionTotalError = actionTotalErrors.find(
-      ({ action, totalError }) =>
-        action.type !== firstActionError.action.type && totalError < 0
+      ({ action, totalError }) => {
+        if (firstActionError.action.type !== "SILENCE") {
+          return action.type !== firstActionError.action.type && totalError < 0;
+        } else {
+          action.type !== firstActionError.action.type &&
+            totalError < 0 &&
+            action.type !== "MOVE";
+        }
+      }
     );
     if (secondActionTotalError) actions.push(secondActionTotalError.action);
   }

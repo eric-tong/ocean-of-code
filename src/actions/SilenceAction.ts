@@ -107,7 +107,7 @@ export default class SilenceAction implements Action {
       throw new Error("Undefined distance");
     const directionIndex = DIRECTIONS.indexOf(this.direction);
     let visitedCell = myCell;
-    for (let distance = 1; distance < this.distance; distance++) {
+    for (let distance = 0; distance < this.distance; distance++) {
       const neighbor = visitedCell[directionIndex];
       if (!neighbor) throw new Error("Invalid traversal path");
       visitedCell = neighbor;
