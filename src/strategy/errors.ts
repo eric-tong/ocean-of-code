@@ -15,7 +15,6 @@ export function getErrors(
   action: Action,
   { myCell, myCells, oppCells, map }: Params
 ): Errors {
-  const currentMse = getMeanSquaredError(myCell, Array.from(oppCells.values()));
   const newMyCells =
     action.type === "SONAR" ? myCells : getPossibleCells(myCells, action, map);
   const oppKnowledgeGain = myCells.size - newMyCells.size;
@@ -23,6 +22,7 @@ export function getErrors(
   switch (action.type) {
     case "MOVE":
     case "TORPEDO":
+    case "SURFACE":
       return action.getErrors(params);
     case "SONAR":
       let sectorCount = 0;
@@ -39,13 +39,7 @@ export function getErrors(
         (1 - sectorCount / totalCount) * (totalCount - sectorCount);
       const myKnowledgeLoss = myKnowledgeAfterSonar - oppCells.size;
       return { myKnowledgeLoss };
-    case "SURFACE":
-      return {
-        mseGain: 0,
-        oppHealth: 0,
-        myDamage: 1,
-        oppKnowledgeGain
-      };
+
     default:
       throw new Error("Invalid action for finding error");
   }

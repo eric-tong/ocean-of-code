@@ -18,15 +18,9 @@ export function getPossibleCells(
   switch (action.type) {
     case "MOVE":
     case "TORPEDO":
-      return action.getNewPossibleCells(prevSet);
     case "SURFACE":
-      if (!action.sector) throw new Error("No sector provided");
+      return action.getNewPossibleCells(prevSet);
 
-      const cellsInSector = getCellsInSector(action.sector, map);
-      oldCells.forEach(cell => {
-        if (cellsInSector.has(cell)) newCells.add(cell);
-      });
-      break;
     case "SILENCE":
       oldCells.forEach(origin => {
         newCells.add(origin);

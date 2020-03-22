@@ -1,7 +1,6 @@
 import { TORPEDO_RANGE } from "../mechanics/constants";
 import { getCellsWithinRange } from "../utils/cell-utils";
 import { getCoords } from "../utils/map";
-import { getPossibleCells } from "../strategy/possible-cells";
 
 export default class TorpedoAction implements Action {
   readonly type = "TORPEDO";
