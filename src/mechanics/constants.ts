@@ -51,5 +51,6 @@ export const DEVICES: Device[] = ["TORPEDO", "SONAR", "SILENCE"];
 export const MAX_CHARGE: Charges = { TORPEDO: 3, SONAR: 4, SILENCE: 6 };
 export const DEFAULT_WIDTH = 15;
 export const DEFAULT_HEIGHT = 15;
+export const MAX_LIFE = 6;
 export const SILENCE_RANGE = 4;
 export const TORPEDO_RANGE = 4;

@@ -1,5 +1,10 @@
+import { MAX_LIFE } from "../mechanics/constants";
+
 type Params = {
+  oppCells: Set<Cell>;
   myCells: Set<Cell>;
+  oppLife: number;
+  myLife: number;
 };
 
 export function decideActions(
@@ -46,17 +51,20 @@ function getTotalError(
     oppKnowledgeGain = 0,
     myKnowledgeLoss = 0
   }: Errors,
-  { myCells }: Params
+  { myCells, oppCells, oppLife, myLife }: Params
 ) {
   const IDEAL_MSE = 9;
   const idealMseError = mse < IDEAL_MSE ? IDEAL_MSE - mse : 0;
 
-  const oppKnowledgeGainMultiplier = myCells.size < 50 ? 1 : 1 / myCells.size;
+  const oppKnowledgeGainMultiplier = myCells.size < 20 ? 1 : 1 / myCells.size;
+  const oppHealthMultiplier =
+    MAX_LIFE - oppLife + 1 + (oppCells.size < 5 ? 10 : 0);
+  const myHealthMultiplier = MAX_LIFE - myLife + 1;
   return (
     idealMseError +
     mseGain +
-    oppHealth * 30 +
-    myDamage * 30 +
+    oppHealth * oppHealthMultiplier * 10 +
+    myDamage * myHealthMultiplier * 10 +
     oppKnowledgeGain * oppKnowledgeGainMultiplier +
     myKnowledgeLoss
   );
