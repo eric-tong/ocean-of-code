@@ -2,7 +2,6 @@ import { DIRECTIONS, MAX_CHARGE } from "../mechanics/constants";
 
 import SilenceAction from "./SilenceAction";
 import { getMeanSquaredError } from "../utils/cell-utils";
-import { getPossibleCells } from "../strategy/possible-cells";
 import { uniqueSectors } from "../mechanics/sectors";
 
 export default class MoveAction implements Action {
@@ -73,7 +72,7 @@ export default class MoveAction implements Action {
     return newCells;
   }
 
-  updateCounts(charges: Charges, record: any): void {
+  updateCounts(charges: Charges, _: any): void {
     if (this.charge) {
       const chargeAmount = Math.min(
         MAX_CHARGE[this.charge],

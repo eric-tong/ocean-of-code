@@ -3,16 +3,11 @@ import {
   getAllValidActions,
   parseActionsFromString
 } from "./utils/action-utils";
-import { getCoords, getMap } from "./utils/map";
+import { getCoords, getMap, getSet } from "./utils/map";
 
-import { MAX_CHARGE } from "./mechanics/constants";
-import MoveAction from "./actions/MoveAction";
 import SonarAction from "./actions/SonarAction";
 import { decideActions } from "./strategy/decider";
 import { getData } from "./utils/data";
-import { getErrors } from "./strategy/errors";
-import { getOppCells } from "./utils/opponent";
-import { getPossibleCells } from "./strategy/possible-cells";
 import { getStartPosition } from "./strategy/start-position";
 import { getValidDirections } from "./mechanics/direction";
 import { parseBase10 } from "./utils/math-utils";
@@ -22,8 +17,8 @@ const [width, height, myId]: number[] = readline()
   .split(" ")
   .map(parseBase10);
 const map = getMap(width, height);
-let oppCells = getOppCells(map);
-let myCells = getOppCells(map);
+let oppCells = getSet(map);
+let myCells = getSet(map);
 
 const startPosition = getStartPosition(map);
 console.log(`${startPosition.x} ${startPosition.y}`);
@@ -42,10 +37,10 @@ while (true) {
   record.visited.add(myCell);
 
   if (data.sonarResult !== "NA") {
-    oppCells = getPossibleCells(
-      oppCells,
-      new SonarAction(record.lastSonarSector, data.sonarResult === "Y")
-    );
+    oppCells = new SonarAction(
+      record.lastSonarSector,
+      data.sonarResult === "Y"
+    ).getNewPossibleCells(oppCells);
   }
 
   const oppActions = parseActionsFromString(data.oppOrders, map);
@@ -53,7 +48,7 @@ while (true) {
     if (action.type === "SONAR") {
       myCells = action.getNewPossibleCells(myCells);
     } else {
-      oppCells = getPossibleCells(oppCells, action);
+      oppCells = action.getNewPossibleCells(oppCells);
     }
   });
 
@@ -65,16 +60,16 @@ while (true) {
     prevCell: record.prevCell,
     oppCells
   });
-  const params = { myCell, myCells, oppCells, map };
   const actionErrors = validActions.map(action => ({
     action,
-    errors: getErrors(action, params)
+    errors: action.getErrors({ myCell, myCells, oppCells, map })
   }));
   const actions = decideActions(actionErrors);
 
+  if (!myCells.has(myCell)) throw new Error("MyCells prediction failure");
   actions.forEach(action => action.updateCounts(charges, record));
   actions.forEach(action => {
-    if (action.type !== "SONAR") myCells = getPossibleCells(myCells, action);
+    if (action.type !== "SONAR") myCells = action.getNewPossibleCells(myCells);
   });
   record.prevCell = myCell;
 
@@ -84,7 +79,5 @@ while (true) {
     actionErrors,
     charges
   );
-  if (!myCells.has(myCell)) throw new Error("MyCells prediction failure");
-
   executeActions(actions);
 }

@@ -29,6 +29,16 @@ export function getMap(width: number, height: number) {
   return map;
 }
 
+export function getSet(map: CellMap) {
+  const oppCells = new Set<Cell>();
+  map.forEach(column =>
+    column.forEach(cell => {
+      if (cell) oppCells.add(cell);
+    })
+  );
+  return oppCells;
+}
+
 export function getCoords(cell: Cell) {
   const coords = cellToCoords.get(cell);
   if (!coords) throw new Error("No coords found");

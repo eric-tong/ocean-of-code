@@ -37,7 +37,7 @@ export default class TorpedoAction implements Action {
     return newCells;
   }
 
-  updateCounts(charges: Charges, record: any): void {
+  updateCounts(charges: Charges, _: any): void {
     charges.TORPEDO = 0;
   }
 }
