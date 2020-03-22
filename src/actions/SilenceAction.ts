@@ -13,7 +13,7 @@ export default class SilenceAction implements Action {
   }
 
   toActionString(): string {
-    throw new Error("Method not implemented.");
+    return `SILENCE ${this.direction} ${this.distance}`;
   }
 
   fromActionString() {
@@ -21,7 +21,7 @@ export default class SilenceAction implements Action {
   }
 
   getErrors({ myCell, myCells, oppCells }: GetErrorsParams): Errors {
-    if (!this.direction || !this.distance)
+    if (!this.direction || typeof this.distance === "undefined")
       throw new Error("Undefined direction or distance");
 
     const currentMse = getMeanSquaredError(
