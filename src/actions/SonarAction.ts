@@ -1,4 +1,5 @@
 import { getSector } from "../mechanics/sectors";
+import { parseBase10 } from "../utils/math-utils";
 
 export default class SonarAction implements Action {
   readonly type = "SONAR";
@@ -12,6 +13,11 @@ export default class SonarAction implements Action {
 
   toActionString() {
     return `SONAR ${this.sector}`;
+  }
+
+  fromActionString(params: string[], _: CellMap, prevCell: Cell) {
+    const sector = parseBase10(params[0]);
+    return new SonarAction(sector, sector === getSector(prevCell));
   }
 
   getErrors({ oppCells }: GetErrorsParams) {

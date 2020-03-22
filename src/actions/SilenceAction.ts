@@ -7,6 +7,10 @@ export default class SilenceAction implements Action {
     throw new Error("Method not implemented.");
   }
 
+  fromActionString() {
+    return new SilenceAction();
+  }
+
   getErrors(params: GetErrorsParams): Errors {
     throw new Error("Method not implemented.");
   }

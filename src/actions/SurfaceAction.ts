@@ -1,5 +1,7 @@
 import { getCellsInSector, getSector } from "../mechanics/sectors";
 
+import { parseBase10 } from "../utils/math-utils";
+
 export default class SurfaceAction implements Action {
   readonly type = "SURFACE";
   sector: number;
@@ -10,6 +12,11 @@ export default class SurfaceAction implements Action {
 
   toActionString() {
     return "SURFACE";
+  }
+
+  fromActionString(params: string[]) {
+    const sector = parseBase10(params[0]);
+    return new SurfaceAction(sector);
   }
 
   getErrors({ myCells }: GetErrorsParams) {

@@ -7,7 +7,7 @@ import SonarAction from "../actions/SonarAction";
 import SurfaceAction from "../actions/SurfaceAction";
 import TorpedoAction from "../actions/TorpedoAction";
 import { getCellsWithinRange } from "./cell-utils";
-import { parseBase10 } from "./math-utils";
+import { parseActionFromString } from "../actions/Actions";
 
 type Params = {
   validDirections: Direction[];
@@ -16,6 +16,19 @@ type Params = {
   prevCell?: Cell;
   oppCells: Set<Cell>;
 };
+
+export function parseActionsFromString(
+  actionsString: string,
+  map: CellMap,
+  prevCell: Cell
+) {
+  const actions = [];
+  for (const actionString of actionsString.split("|")) {
+    const action = parseActionFromString(actionString, map, prevCell);
+    if (action) actions.push(action);
+  }
+  return actions;
+}
 
 export function getAllValidActions({
   validDirections,
@@ -61,49 +74,4 @@ export function getAllValidActions({
 export function executeActions(actions: Action[]) {
   const actionStrings = actions.map(action => action.toActionString());
   console.log(actionStrings.join("|"));
-}
-
-export function parseActionsFromString(actionsString: string, map: CellMap) {
-  const actions = [];
-  for (const actionString of actionsString.split("|")) {
-    const action = parseActionFromString(actionString, map);
-    if (action) actions.push(action);
-  }
-  return actions;
-}
-
-function parseActionFromString(
-  actionString: string,
-  map: CellMap
-): Action | undefined {
-  const [type, ...payload] = actionString.split(" ");
-  switch (type) {
-    case "MOVE":
-      // @ts-ignore
-      const [direction, charge]: [Direction, Device] = payload;
-      return new MoveAction(direction, charge);
-    case "TORPEDO":
-      const [x, y] = payload.map(parseBase10);
-      const cell = map[x][y];
-      if (!cell) throw new Error("Torpedoed cell does not exist");
-      return new TorpedoAction(cell);
-    case "SURFACE":
-      const sector = parseBase10(payload[0]);
-      return new SurfaceAction(sector);
-    case "SONAR":
-      // TODO Handle sonar
-      return;
-    case "SILENCE":
-      return new SilenceAction();
-    case "MINE":
-      // TODO Handle mines
-      return;
-    case "TRIGGER":
-      // TODO Handle trigger
-      return;
-    case "NA":
-      return;
-    default:
-      throw new Error(`Invalid action string ${actionString}`);
-  }
 }

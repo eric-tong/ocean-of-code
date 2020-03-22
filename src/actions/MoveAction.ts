@@ -17,6 +17,13 @@ export default class MoveAction implements Action {
   toActionString(): string {
     return `MOVE ${this.direction} ${this.charge ? this.charge : ""}`;
   }
+
+  fromActionString(params: string[], _: CellMap) {
+    // @ts-ignore
+    const [direction, charge]: [Direction, Device] = params;
+    return new MoveAction(direction, charge);
+  }
+
   getErrors({ myCell, myCells, oppCells, map }: GetErrorsParams): Errors {
     const currentMse = getMeanSquaredError(
       myCell,

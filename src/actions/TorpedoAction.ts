@@ -1,6 +1,7 @@
 import { TORPEDO_RANGE } from "../mechanics/constants";
 import { getCellsWithinRange } from "../utils/cell-utils";
 import { getCoords } from "../utils/map";
+import { parseBase10 } from "../utils/math-utils";
 
 export default class TorpedoAction implements Action {
   readonly type = "TORPEDO";
@@ -13,6 +14,13 @@ export default class TorpedoAction implements Action {
   toActionString() {
     const { x, y } = getCoords(this.cell);
     return `TORPEDO ${x} ${y}`;
+  }
+
+  fromActionString(params: string[], map: CellMap) {
+    const [x, y] = params.map(parseBase10);
+    const cell = map[x][y];
+    if (!cell) throw new Error("Torpedoed cell does not exist");
+    return new TorpedoAction(cell);
   }
 
   getErrors({ myCell, myCells, oppCells }: GetErrorsParams) {

@@ -26,7 +26,7 @@ console.log(`${startPosition.x} ${startPosition.y}`);
 const charges: Charges = { TORPEDO: 0, SONAR: 0, SILENCE: 0 };
 const record: MovementRecord = {
   lastSonarSector: -1,
-  prevCell: undefined,
+  prevCell: [undefined, undefined, undefined, undefined],
   visited: new Set<Cell>()
 };
 
@@ -43,7 +43,11 @@ while (true) {
     ).getNewPossibleCells(oppCells);
   }
 
-  const oppActions = parseActionsFromString(data.oppOrders, map);
+  const oppActions = parseActionsFromString(
+    data.oppOrders,
+    map,
+    record.prevCell
+  );
   oppActions.forEach(action => {
     if (action.type === "SONAR") {
       myCells = action.getNewPossibleCells(myCells);
