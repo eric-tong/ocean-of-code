@@ -1,5 +1,6 @@
 import { DIRECTIONS, MAX_CHARGE } from "../mechanics/constants";
 
+import SilenceAction from "./SilenceAction";
 import { getMeanSquaredError } from "../utils/cell-utils";
 import { getPossibleCells } from "../strategy/possible-cells";
 import { uniqueSectors } from "../mechanics/sectors";
@@ -42,10 +43,8 @@ export default class MoveAction implements Action {
         errors.oppHealth -= meanDamage / MAX_CHARGE.TORPEDO;
         break;
       case "SILENCE":
-        const cellsAfterSilence = getPossibleCells(
-          newMyCells,
-          { type: "SILENCE" },
-          map
+        const cellsAfterSilence = new SilenceAction().getNewPossibleCells(
+          myCells
         );
         const oppKnowledgeGain = newMyCells.size - cellsAfterSilence.size;
         errors.oppKnowledgeGain += oppKnowledgeGain / MAX_CHARGE.SILENCE;

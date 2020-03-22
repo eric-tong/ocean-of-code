@@ -2,6 +2,7 @@ import { DEVICES, MAX_CHARGE, TORPEDO_RANGE } from "../mechanics/constants";
 import { getSector, uniqueSectors } from "../mechanics/sectors";
 
 import MoveAction from "../actions/MoveAction";
+import SilenceAction from "../actions/SilenceAction";
 import SonarAction from "../actions/SonarAction";
 import SurfaceAction from "../actions/SurfaceAction";
 import TorpedoAction from "../actions/TorpedoAction";
@@ -104,7 +105,7 @@ function parseActionFromString(
       // TODO Handle sonar
       return;
     case "SILENCE":
-      return { type };
+      return new SilenceAction();
     case "MINE":
       // TODO Handle mines
       return;

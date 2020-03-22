@@ -57,6 +57,8 @@ while (true) {
     }
   });
 
+  if (!myCells.has(myCell)) throw new Error("MyCells prediction failure");
+
   const validDirections = getValidDirections(myCell, record.visited);
   const validActions = getAllValidActions({
     validDirections,

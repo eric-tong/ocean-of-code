@@ -15,28 +15,8 @@ export function getPossibleCells(prevSet: Set<Cell>, action: Action) {
     case "TORPEDO":
     case "SURFACE":
     case "SONAR":
-      return action.getNewPossibleCells(prevSet);
-
     case "SILENCE":
-      oldCells.forEach(origin => {
-        newCells.add(origin);
-        for (
-          let directionIndex = 0;
-          directionIndex < DIRECTIONS.length;
-          directionIndex++
-        ) {
-          let cell: Cell | undefined = origin;
-          for (let distance = 1; distance <= SILENCE_RANGE; distance++) {
-            cell = cell[directionIndex];
-            if (cell) {
-              newCells.add(cell);
-            } else {
-              break;
-            }
-          }
-        }
-      });
-      break;
+      return action.getNewPossibleCells(prevSet);
     default:
       console.error(action);
       throw new Error("Invalid action to update possible cells");
