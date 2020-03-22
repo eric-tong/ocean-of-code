@@ -2,7 +2,7 @@ import {
   executeActions,
   getAllValidActions,
   parseActionsFromString
-} from "./mechanics/action";
+} from "./utils/action-utils";
 import { getCoords, getMap } from "./utils/map";
 
 import { MAX_CHARGE } from "./mechanics/constants";
