@@ -2,6 +2,7 @@ import { DEVICES, MAX_CHARGE, TORPEDO_RANGE } from "../mechanics/constants";
 import { getSector, uniqueSectors } from "../mechanics/sectors";
 
 import MoveAction from "../actions/MoveAction";
+import SonarAction from "../actions/SonarAction";
 import SurfaceAction from "../actions/SurfaceAction";
 import TorpedoAction from "../actions/TorpedoAction";
 import { getCellsWithinRange } from "./cell-utils";
@@ -11,6 +12,7 @@ type Params = {
   validDirections: Direction[];
   charges: Charges;
   myCell: Cell;
+  prevCell?: Cell;
   oppCells: Set<Cell>;
 };
 
@@ -18,7 +20,8 @@ export function getAllValidActions({
   validDirections,
   charges,
   oppCells,
-  myCell
+  myCell,
+  prevCell
 }: Params) {
   const actions: Action[] = [];
   const unchargedDevices = DEVICES.filter(
@@ -44,7 +47,11 @@ export function getAllValidActions({
 
   if (charges.SONAR >= MAX_CHARGE.SONAR) {
     const sectors = uniqueSectors(oppCells);
-    sectors.forEach(sector => actions.push(new SurfaceAction(sector)));
+    sectors.forEach(sector =>
+      actions.push(
+        new SonarAction(sector, !!prevCell && sector === getSector(prevCell))
+      )
+    );
   }
 
   return actions;
@@ -57,10 +64,8 @@ export function executeActions(actions: Action[]) {
       case "MOVE":
       case "TORPEDO":
       case "SURFACE":
-        actionStrings.push(action.toActionString());
-        break;
       case "SONAR":
-        actionStrings.push(`SONAR ${action.sector}`);
+        actionStrings.push(action.toActionString());
         break;
       default:
         throw new Error("Cannot excute action");

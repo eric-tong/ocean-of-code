@@ -6,6 +6,8 @@ import {
 import { getCoords, getMap } from "./utils/map";
 
 import { MAX_CHARGE } from "./mechanics/constants";
+import MoveAction from "./actions/MoveAction";
+import SonarAction from "./actions/SonarAction";
 import { decideActions } from "./strategy/decider";
 import { getData } from "./utils/data";
 import { getErrors } from "./strategy/errors";
@@ -30,7 +32,7 @@ const visited = new Set<Cell>();
 const charges: Charges = { TORPEDO: 0, SONAR: 0, SILENCE: 0 };
 
 let lastSonarSector = -1;
-let lastCell: Cell | undefined = undefined;
+let prevCell: Cell | undefined = undefined;
 
 while (true) {
   const data = getData();
@@ -41,21 +43,16 @@ while (true) {
   if (data.sonarResult !== "NA") {
     oppCells = getPossibleCells(
       oppCells,
-      {
-        type: "SONAR",
-        sector: lastSonarSector,
-        inSector: data.sonarResult === "Y"
-      },
-      map
+      new SonarAction(lastSonarSector, data.sonarResult === "Y")
     );
   }
 
   const oppActions = parseActionsFromString(data.oppOrders, map);
   oppActions.forEach(action => {
     if (action.type === "SONAR") {
-      myCells = getPossibleCells(myCells, action, map, lastCell);
+      myCells = action.getNewPossibleCells(myCells);
     } else {
-      oppCells = getPossibleCells(oppCells, action, map);
+      oppCells = getPossibleCells(oppCells, action);
     }
   });
 
@@ -64,6 +61,7 @@ while (true) {
     validDirections,
     charges,
     myCell,
+    prevCell,
     oppCells
   });
   const params = { myCell, myCells, oppCells, map };
@@ -75,10 +73,9 @@ while (true) {
 
   actions.forEach(updateCounts);
   actions.forEach(action => {
-    if (action.type !== "SONAR")
-      myCells = getPossibleCells(myCells, action, map);
+    if (action.type !== "SONAR") myCells = getPossibleCells(myCells, action);
   });
-  lastCell = myCell;
+  prevCell = myCell;
 
   console.error(
     Array.from(oppCells).map(cell => getCoords(cell)),

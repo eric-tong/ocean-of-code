@@ -7,18 +7,14 @@ import { getCellsInSector, getSector } from "../mechanics/sectors";
 
 import { getCellsWithinRange } from "../utils/cell-utils";
 
-export function getPossibleCells(
-  prevSet: Set<Cell>,
-  action: Action,
-  map: CellMap,
-  prevCell?: Cell
-) {
+export function getPossibleCells(prevSet: Set<Cell>, action: Action) {
   const newCells = new Set<Cell>();
   const oldCells = Array.from(prevSet.values());
   switch (action.type) {
     case "MOVE":
     case "TORPEDO":
     case "SURFACE":
+    case "SONAR":
       return action.getNewPossibleCells(prevSet);
 
     case "SILENCE":
@@ -40,23 +36,6 @@ export function getPossibleCells(
           }
         }
       });
-      break;
-    case "SONAR":
-      let inSector = action.inSector;
-      if (typeof inSector === "undefined") {
-        if (!prevCell) throw new Error("No previous cell provided");
-        inSector = action.sector === getSector(prevCell);
-      }
-
-      const sectorCells = getCellsInSector(action.sector, map);
-      for (const cell of oldCells) {
-        if (
-          (inSector && sectorCells.has(cell)) ||
-          (!inSector && !sectorCells.has(cell))
-        ) {
-          newCells.add(cell);
-        }
-      }
       break;
     default:
       console.error(action);
