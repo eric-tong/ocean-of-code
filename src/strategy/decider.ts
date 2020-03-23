@@ -66,7 +66,8 @@ function getTotalError(
     MAX_LIFE - oppLife + 1 + (oppCells.size < 5 ? 10 : 0);
   const myHealthMultiplier = MAX_LIFE - myLife + 1;
 
-  const futureMovementError = 20 / futureMovement;
+  const futureMovementError =
+    futureMovement > 0 ? 20 / futureMovement : futureMovement;
   return (
     idealMseError +
     mseGain +

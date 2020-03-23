@@ -19,14 +19,15 @@ export default class SurfaceAction implements Action {
     return new SurfaceAction(sector);
   }
 
-  getErrors({ myCells }: GetErrorsParams) {
+  getErrors({ myCells, visited }: GetErrorsParams) {
     const newMyCells = this.getNewPossibleCells(myCells);
     const oppKnowledgeGain = myCells.size - newMyCells.size;
     return {
       mseGain: 0,
       oppHealth: 0,
       myDamage: 1,
-      oppKnowledgeGain
+      oppKnowledgeGain,
+      futureMovement: visited.size * -1
     };
   }
 
