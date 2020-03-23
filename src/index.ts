@@ -69,8 +69,7 @@ while (true) {
     for (const action of torpedoActions) {
       oppCells = action.getNewPossibleCellsWithHitOrMiss(
         oppCells,
-        record.lastOppLife - data.oppLife,
-        map
+        record.lastOppLife - data.oppLife
       );
     }
   }

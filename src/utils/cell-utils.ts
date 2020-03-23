@@ -35,19 +35,11 @@ export function getCellsWithinRange(origin: Cell, range: number): Set<Cell> {
   return visited;
 }
 
-export function getAllNeighborsIncludingDiagonals(origin: Cell, map: CellMap) {
-  const coords = getCoords(origin);
-  const deltas = [
-    [0, 1],
-    [1, 0],
-    [1, 1],
-    [0, -1],
-    [-1, 0],
-    [-1, -1],
-    [1, -1],
-    [-1, 1]
-  ];
-  return deltas
-    .map(([dx, dy]) => map[coords.x + dx][coords.y + dy])
-    .filter(cell => !!cell) as Cell[];
+export function areNeighbors(a: Cell, b: Cell) {
+  const coordsA = getCoords(a);
+  const coordsB = getCoords(b);
+  return (
+    Math.abs(coordsA.x - coordsB.x) === 1 ||
+    Math.abs(coordsA.y - coordsB.y) === 1
+  );
 }
