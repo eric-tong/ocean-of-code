@@ -5,7 +5,9 @@ import {
 } from "./actions/Actions";
 import { getCoords, getMap, getSet } from "./utils/map";
 
+import { MAX_LIFE } from "./mechanics/constants";
 import SonarAction from "./actions/SonarAction";
+import TorpedoAction from "./actions/TorpedoAction";
 import { decideActions } from "./strategy/decider";
 import { getData } from "./utils/data";
 import { getStartPosition } from "./strategy/start-position";
@@ -26,6 +28,10 @@ console.log(`${startPosition.x} ${startPosition.y}`);
 const charges: Charges = { TORPEDO: 0, SONAR: 0, SILENCE: 0 };
 const record: MovementRecord = {
   lastSonarSector: -1,
+  lastOppLife: MAX_LIFE,
+  lastMyLife: MAX_LIFE,
+  lastOppActions: [],
+  lastMyActions: [],
   prevCell: [undefined, undefined, undefined, undefined],
   visited: new Set<Cell>()
 };
@@ -41,6 +47,34 @@ while (true) {
       record.lastSonarSector,
       data.sonarResult === "Y"
     ).getNewPossibleCells(oppCells);
+  }
+
+  if (data.oppLife < record.lastOppLife) {
+    let damage = record.lastOppLife - data.oppLife;
+    const surfaceAction = record.lastOppActions.find(
+      action => action.type === "SURFACE"
+    );
+    if (surfaceAction) damage--;
+
+    // TODO handle mines
+    const triggerActions = [
+      ...record.lastOppActions,
+      ...record.lastMyActions
+    ].filter(action => action.type === "TRIGGER");
+
+    if (triggerActions.length === 0) {
+      const torpedoActions = [
+        ...record.lastOppActions,
+        ...record.lastMyActions
+      ].filter(action => action.type === "TORPEDO") as TorpedoAction[];
+      for (const action of torpedoActions) {
+        oppCells = action.getNewPossibleCellsWithHitOrMiss(
+          oppCells,
+          record.lastOppLife - data.oppLife,
+          map
+        );
+      }
+    }
   }
 
   const oppActions = parseActionsFromString(
@@ -80,7 +114,12 @@ while (true) {
   actions.forEach(action => {
     if (action.type !== "SONAR") myCells = action.getNewPossibleCells(myCells);
   });
+
   record.prevCell = myCell;
+  record.lastOppLife = data.oppLife;
+  record.lastMyLife = data.myLife;
+  record.lastOppActions = [...oppActions];
+  record.lastMyActions = [...actions];
 
   console.error(
     Array.from(oppCells).map(cell => getCoords(cell)),

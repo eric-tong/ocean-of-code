@@ -34,3 +34,20 @@ export function getCellsWithinRange(origin: Cell, range: number): Set<Cell> {
   }
   return visited;
 }
+
+export function getAllNeighborsIncludingDiagonals(origin: Cell, map: CellMap) {
+  const coords = getCoords(origin);
+  const deltas = [
+    [0, 1],
+    [1, 0],
+    [1, 1],
+    [0, -1],
+    [-1, 0],
+    [-1, -1],
+    [1, -1],
+    [-1, 1]
+  ];
+  return deltas
+    .map(([dx, dy]) => map[coords.x + dx][coords.y + dy])
+    .filter(cell => !!cell) as Cell[];
+}

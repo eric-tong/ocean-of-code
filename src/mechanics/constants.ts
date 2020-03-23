@@ -17,6 +17,10 @@ declare global {
   type Charges = { TORPEDO: number; SONAR: number; SILENCE: number };
   type MovementRecord = {
     lastSonarSector: number;
+    lastOppLife: number;
+    lastMyLife: number;
+    lastOppActions: Action[];
+    lastMyActions: Action[];
     prevCell: Cell;
     visited: Set<Cell>;
   };
@@ -36,7 +40,7 @@ declare global {
     visited: Set<Cell>;
   };
   interface Action {
-    readonly type: "MOVE" | "SURFACE" | Device;
+    readonly type: "MOVE" | "SURFACE" | "TRIGGER" | Device;
     toActionString(): string;
     fromActionString(params: string[], map: CellMap, prevCell: Cell): Action;
     getErrors(params: GetErrorsParams): Errors;

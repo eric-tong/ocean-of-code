@@ -1,6 +1,9 @@
 import { MAX_CHARGE, TORPEDO_RANGE } from "../mechanics/constants";
+import {
+  getAllNeighborsIncludingDiagonals,
+  getCellsWithinRange
+} from "../utils/cell-utils";
 
-import { getCellsWithinRange } from "../utils/cell-utils";
 import { getCoords } from "../utils/map";
 import { parseBase10 } from "../utils/math-utils";
 
@@ -43,6 +46,40 @@ export default class TorpedoAction implements Action {
     oldCells.forEach(cell => {
       if (cellsWithinRange.has(cell)) newCells.add(cell);
     });
+    return newCells;
+  }
+
+  getNewPossibleCellsWithHitOrMiss(
+    oldCells: Set<Cell>,
+    damage: number,
+    map: CellMap
+  ): Set<Cell> {
+    if (!this.cell) {
+      throw new Error("Undefined torpedo cell");
+    }
+
+    const newCells = new Set<Cell>();
+    const cellsWithinRange = new Set(
+      getAllNeighborsIncludingDiagonals(this.cell, map)
+    );
+    switch (damage) {
+      case 2:
+        newCells.add(this.cell);
+      case 1:
+        oldCells.forEach(cell => {
+          if (cellsWithinRange.has(cell)) newCells.add(cell);
+        });
+        break;
+      case 0:
+        oldCells.forEach(cell => {
+          if (!cellsWithinRange.has(cell) && cell !== this.cell)
+            newCells.add(cell);
+        });
+        break;
+      default:
+        throw new Error(`Invalid damage: ${damage}`);
+    }
+    console.error({ oldCells, newCells });
     return newCells;
   }
 
