@@ -38,8 +38,9 @@ export function getCellsWithinRange(origin: Cell, range: number): Set<Cell> {
 export function areNeighbors(a: Cell, b: Cell) {
   const coordsA = getCoords(a);
   const coordsB = getCoords(b);
+  const dx = Math.abs(coordsA.x - coordsB.x);
+  const dy = Math.abs(coordsA.y - coordsB.y);
   return (
-    Math.abs(coordsA.x - coordsB.x) === 1 &&
-    Math.abs(coordsA.y - coordsB.y) === 1
+    (dx === 1 && dy === 1) || (dx === 1 && dy === 0) || (dx === 0 && dy === 1)
   );
 }

@@ -55,26 +55,25 @@ while (true) {
     record.prevCell
   );
 
-  let oppDamage = record.lastOppLife - data.oppLife;
-  const surfaceAction = oppActions.find(action => action.type === "SURFACE");
-  if (surfaceAction) oppDamage--;
-
   const torpedoActions = [...oppActions, ...record.lastMyActions].filter(
     action => action.type === "TORPEDO"
   ) as TorpedoAction[];
   const triggerActions = [...oppActions, ...record.lastMyActions].filter(
     action => action.type === "TRIGGER"
   ) as TriggerAction[];
+  const surfaceAction = oppActions.find(action => action.type === "SURFACE");
+
+  let oppDamage = record.lastOppLife - data.oppLife;
+  if (surfaceAction) oppDamage--;
 
   if (triggerActions.length === 0) {
     if (torpedoActions.length === 1) {
       const torpedoAction = torpedoActions[0];
-      let damage = record.lastOppLife - data.oppLife;
-      if (damage === 2) {
+      if (oppDamage === 2) {
         oppCells = new Set([torpedoAction.cell]);
-      } else if (damage === 1) {
+      } else if (oppDamage === 1) {
         oppCells = torpedoAction.getCellsInOneDamageZone(oppCells);
-      } else if (damage === 0) {
+      } else if (oppDamage === 0) {
         oppCells = torpedoAction.getCellsNotInDamageZone(oppCells);
       } else {
         throw new Error("Invalid damage");
@@ -91,6 +90,7 @@ while (true) {
   });
 
   console.error("OPPCELLS", Array.from(oppCells).map(getCoords));
+  if (!oppCells.size) throw new Error("Lost opponent position");
 
   const validDirections = getValidDirections(myCell, record.visited);
   const validActions = getAllValidActions({
