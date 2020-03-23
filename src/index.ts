@@ -49,31 +49,29 @@ while (true) {
     ).getNewPossibleCells(oppCells);
   }
 
-  if (data.oppLife < record.lastOppLife) {
-    let damage = record.lastOppLife - data.oppLife;
-    const surfaceAction = record.lastOppActions.find(
-      action => action.type === "SURFACE"
-    );
-    if (surfaceAction) damage--;
+  let oppDamage = record.lastOppLife - data.oppLife;
+  const surfaceAction = record.lastOppActions.find(
+    action => action.type === "SURFACE"
+  );
+  if (surfaceAction) oppDamage--;
 
-    // TODO handle mines
-    const triggerActions = [
+  // TODO handle mines
+  const triggerActions = [
+    ...record.lastOppActions,
+    ...record.lastMyActions
+  ].filter(action => action.type === "TRIGGER");
+
+  if (triggerActions.length === 0) {
+    const torpedoActions = [
       ...record.lastOppActions,
       ...record.lastMyActions
-    ].filter(action => action.type === "TRIGGER");
-
-    if (triggerActions.length === 0) {
-      const torpedoActions = [
-        ...record.lastOppActions,
-        ...record.lastMyActions
-      ].filter(action => action.type === "TORPEDO") as TorpedoAction[];
-      for (const action of torpedoActions) {
-        oppCells = action.getNewPossibleCellsWithHitOrMiss(
-          oppCells,
-          record.lastOppLife - data.oppLife,
-          map
-        );
-      }
+    ].filter(action => action.type === "TORPEDO") as TorpedoAction[];
+    for (const action of torpedoActions) {
+      oppCells = action.getNewPossibleCellsWithHitOrMiss(
+        oppCells,
+        record.lastOppLife - data.oppLife,
+        map
+      );
     }
   }
 
