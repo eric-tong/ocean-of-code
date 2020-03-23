@@ -27,11 +27,19 @@ export default class TorpedoAction implements Action {
   getErrors({ myCell, myCells, oppCells }: GetErrorsParams) {
     const newMyCells = this.getNewPossibleCells(myCells);
     const oppKnowledgeGain = myCells.size - newMyCells.size;
+
+    const notWithinRangeCount = this.getCellsNotInDamageZone(oppCells).size;
+    const withinRangeCount = oppCells.size - notWithinRangeCount;
+    const myKnowledgeAfterTorpedo =
+      (withinRangeCount * withinRangeCount) / oppCells.size +
+      (notWithinRangeCount * notWithinRangeCount) / oppCells.size;
+    const myKnowledgeLoss = myKnowledgeAfterTorpedo - oppCells.size;
     return {
       mseGain: 0,
       oppHealth: getMeanOppDamage(this.cell, oppCells) * -1,
       myDamage: getMyDamage(this.cell, myCell),
-      oppKnowledgeGain
+      oppKnowledgeGain,
+      myKnowledgeLoss
     };
   }
 

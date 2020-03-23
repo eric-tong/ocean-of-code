@@ -67,7 +67,10 @@ while (true) {
   if (surfaceAction) oppDamage--;
 
   if (triggerActions.length === 0) {
-    if (torpedoActions.length === 1) {
+    if (
+      torpedoActions.length === 1 &&
+      record.lastMyActions.indexOf(torpedoActions[0]) > 0
+    ) {
       const torpedoAction = torpedoActions[0];
       if (oppDamage === 2) {
         oppCells = new Set([torpedoAction.cell]);
@@ -84,6 +87,22 @@ while (true) {
   oppActions.forEach(action => {
     if (action.type === "SONAR") {
       myCells = action.getNewPossibleCells(myCells);
+    } else if (action.type === "TORPEDO") {
+      if (triggerActions.length === 0) {
+        if (torpedoActions.length === 1) {
+          const torpedoAction = action as TorpedoAction;
+          if (oppDamage === 2) {
+            oppCells = new Set([torpedoAction.cell]);
+          } else if (oppDamage === 1) {
+            oppCells = torpedoAction.getCellsInOneDamageZone(oppCells);
+          } else if (oppDamage === 0) {
+            oppCells = torpedoAction.getCellsNotInDamageZone(oppCells);
+          } else {
+            throw new Error("Invalid damage");
+          }
+        }
+      }
+      oppCells = action.getNewPossibleCells(oppCells);
     } else {
       oppCells = action.getNewPossibleCells(oppCells);
     }
