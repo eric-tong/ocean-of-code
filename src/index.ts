@@ -118,11 +118,5 @@ while (true) {
   record.lastOppActions = [...oppActions];
   record.lastMyActions = [...actions];
 
-  console.error(
-    Array.from(oppCells).map(cell => getCoords(cell)),
-    Array.from(myCells).map(cell => getCoords(cell)),
-    actionErrors,
-    charges
-  );
   executeActions(actions);
 }

@@ -72,7 +72,10 @@ export default class TorpedoAction implements Action {
       default:
         throw new Error(`Invalid damage: ${damage}`);
     }
-    console.error({ oldCells, newCells });
+    console.error(
+      Array.from(oldCells).map(cell => getCoords(cell)),
+      Array.from(newCells).map(cell => getCoords(cell))
+    );
     return newCells;
   }
 

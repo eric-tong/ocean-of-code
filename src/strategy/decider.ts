@@ -27,12 +27,16 @@ export function decideActions(
   if (actionTotalErrors.length > 1) {
     const secondActionTotalError = actionTotalErrors.find(
       ({ action, totalError }) => {
-        if (firstActionError.action.type !== "SILENCE") {
-          return action.type !== firstActionError.action.type && totalError < 0;
-        } else {
+        if (firstActionError.action.type === "SILENCE") {
           action.type !== firstActionError.action.type &&
             totalError < 0 &&
             action.type !== "MOVE";
+        } else if (firstActionError.action.type === "MOVE") {
+          action.type !== firstActionError.action.type &&
+            totalError < 0 &&
+            action.type !== "SILENCE";
+        } else {
+          return action.type !== firstActionError.action.type && totalError < 0;
         }
       }
     );
