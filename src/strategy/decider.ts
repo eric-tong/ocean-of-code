@@ -67,7 +67,7 @@ function getTotalError(
   const myHealthMultiplier = MAX_LIFE - myLife + 1;
 
   const futureMovementError =
-    futureMovement > 0 ? 20 / futureMovement : futureMovement;
+    futureMovement > 0 ? 20 / futureMovement : futureMovement / 3;
   return (
     idealMseError +
     mseGain +
