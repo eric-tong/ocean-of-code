@@ -46,36 +46,20 @@ export default class TorpedoAction implements Action {
     return newCells;
   }
 
-  getNewPossibleCellsWithHitOrMiss(
-    oldCells: Set<Cell>,
-    damage: number
-  ): Set<Cell> {
-    if (!this.cell) {
-      throw new Error("Undefined torpedo cell");
-    }
-
+  getCellsInOneDamageZone(oldCells: Set<Cell>) {
     const newCells = new Set<Cell>();
-    switch (damage) {
-      case 2:
-        newCells.add(this.cell);
-      case 1:
-        oldCells.forEach(cell => {
-          if (areNeighbors(cell, this.cell)) newCells.add(cell);
-        });
-        break;
-      case 0:
-        oldCells.forEach(cell => {
-          if (!areNeighbors(cell, this.cell) && cell !== this.cell)
-            newCells.add(cell);
-        });
-        break;
-      default:
-        throw new Error(`Invalid damage: ${damage}`);
-    }
-    console.error(
-      Array.from(oldCells).map(cell => getCoords(cell)),
-      Array.from(newCells).map(cell => getCoords(cell))
-    );
+    oldCells.forEach(cell => {
+      if (areNeighbors(cell, this.cell)) newCells.add(cell);
+    });
+    return newCells;
+  }
+
+  getCellsNotInDamageZone(oldCells: Set<Cell>) {
+    const newCells = new Set<Cell>();
+    const oneDamageZone = this.getCellsInOneDamageZone(oldCells);
+    oldCells.forEach(cell => {
+      if (!oneDamageZone.has(cell) && cell !== this.cell) newCells.add(cell);
+    });
     return newCells;
   }
 

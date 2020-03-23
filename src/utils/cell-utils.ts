@@ -39,7 +39,7 @@ export function areNeighbors(a: Cell, b: Cell) {
   const coordsA = getCoords(a);
   const coordsB = getCoords(b);
   return (
-    Math.abs(coordsA.x - coordsB.x) === 1 ||
+    Math.abs(coordsA.x - coordsB.x) === 1 &&
     Math.abs(coordsA.y - coordsB.y) === 1
   );
 }

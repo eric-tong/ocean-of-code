@@ -3,6 +3,7 @@ import SilenceAction from "./SilenceAction";
 import SonarAction from "./SonarAction";
 import SurfaceAction from "./SurfaceAction";
 import TorpedoAction from "./TorpedoAction";
+import TriggerAction from "./TriggerAction";
 
 const ACTIONS: Action[] = [
   // @ts-ignore
@@ -13,7 +14,8 @@ const ACTIONS: Action[] = [
   // @ts-ignore
   new SurfaceAction(),
   // @ts-ignore
-  new TorpedoAction()
+  new TorpedoAction(),
+  new TriggerAction()
 ];
 const TYPE_TO_ACTION = new Map<String, Action>(
   ACTIONS.map(action => [action.type, action])

@@ -19,7 +19,6 @@ declare global {
     lastSonarSector: number;
     lastOppLife: number;
     lastMyLife: number;
-    lastOppActions: Action[];
     lastMyActions: Action[];
     prevCell: Cell;
     visited: Set<Cell>;

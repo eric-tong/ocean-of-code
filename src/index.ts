@@ -8,6 +8,7 @@ import { getCoords, getMap, getSet } from "./utils/map";
 import { MAX_LIFE } from "./mechanics/constants";
 import SonarAction from "./actions/SonarAction";
 import TorpedoAction from "./actions/TorpedoAction";
+import TriggerAction from "./actions/TriggerAction";
 import { decideActions } from "./strategy/decider";
 import { getData } from "./utils/data";
 import { getStartPosition } from "./strategy/start-position";
@@ -30,7 +31,6 @@ const record: MovementRecord = {
   lastSonarSector: -1,
   lastOppLife: MAX_LIFE,
   lastMyLife: MAX_LIFE,
-  lastOppActions: [],
   lastMyActions: [],
   prevCell: [undefined, undefined, undefined, undefined],
   visited: new Set<Cell>()
@@ -49,36 +49,39 @@ while (true) {
     ).getNewPossibleCells(oppCells);
   }
 
-  let oppDamage = record.lastOppLife - data.oppLife;
-  const surfaceAction = record.lastOppActions.find(
-    action => action.type === "SURFACE"
-  );
-  if (surfaceAction) oppDamage--;
-
-  // TODO handle mines
-  const triggerActions = [
-    ...record.lastOppActions,
-    ...record.lastMyActions
-  ].filter(action => action.type === "TRIGGER");
-
-  if (triggerActions.length === 0) {
-    const torpedoActions = [
-      ...record.lastOppActions,
-      ...record.lastMyActions
-    ].filter(action => action.type === "TORPEDO") as TorpedoAction[];
-    for (const action of torpedoActions) {
-      oppCells = action.getNewPossibleCellsWithHitOrMiss(
-        oppCells,
-        record.lastOppLife - data.oppLife
-      );
-    }
-  }
-
   const oppActions = parseActionsFromString(
     data.oppOrders,
     map,
     record.prevCell
   );
+
+  let oppDamage = record.lastOppLife - data.oppLife;
+  const surfaceAction = oppActions.find(action => action.type === "SURFACE");
+  if (surfaceAction) oppDamage--;
+
+  const torpedoActions = [...oppActions, ...record.lastMyActions].filter(
+    action => action.type === "TORPEDO"
+  ) as TorpedoAction[];
+  const triggerActions = [...oppActions, ...record.lastMyActions].filter(
+    action => action.type === "TRIGGER"
+  ) as TriggerAction[];
+
+  if (triggerActions.length === 0) {
+    if (torpedoActions.length === 1) {
+      const torpedoAction = torpedoActions[0];
+      let damage = record.lastOppLife - data.oppLife;
+      if (damage === 2) {
+        oppCells = new Set([torpedoAction.cell]);
+      } else if (damage === 1) {
+        oppCells = torpedoAction.getCellsInOneDamageZone(oppCells);
+      } else if (damage === 0) {
+        oppCells = torpedoAction.getCellsNotInDamageZone(oppCells);
+      } else {
+        throw new Error("Invalid damage");
+      }
+    }
+  }
+
   oppActions.forEach(action => {
     if (action.type === "SONAR") {
       myCells = action.getNewPossibleCells(myCells);
@@ -86,6 +89,8 @@ while (true) {
       oppCells = action.getNewPossibleCells(oppCells);
     }
   });
+
+  console.error("OPPCELLS", Array.from(oppCells).map(getCoords));
 
   const validDirections = getValidDirections(myCell, record.visited);
   const validActions = getAllValidActions({
@@ -115,7 +120,6 @@ while (true) {
   record.prevCell = myCell;
   record.lastOppLife = data.oppLife;
   record.lastMyLife = data.myLife;
-  record.lastOppActions = [...oppActions];
   record.lastMyActions = [...actions];
 
   executeActions(actions);
