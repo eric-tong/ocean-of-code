@@ -122,7 +122,13 @@ while (true) {
   });
   const actionErrors = validActions.map(action => ({
     action,
-    errors: action.getErrors({ myCell, myCells, oppCells, map })
+    errors: action.getErrors({
+      myCell,
+      myCells,
+      oppCells,
+      map,
+      visited: record.visited
+    })
   }));
   const actions = decideActions(actionErrors, {
     myCells,
@@ -135,6 +141,8 @@ while (true) {
   actions.forEach(action => {
     if (action.type !== "SONAR") myCells = action.getNewPossibleCells(myCells);
   });
+
+  console.error("ACTIONS", actionErrors);
 
   record.prevCell = myCell;
   record.lastOppLife = data.oppLife;

@@ -12,6 +12,7 @@ declare global {
     myDamage?: number;
     oppKnowledgeGain?: number;
     myKnowledgeLoss?: number;
+    futureMovement?: number;
   };
 
   type Charges = { TORPEDO: number; SONAR: number; SILENCE: number };
@@ -29,6 +30,7 @@ declare global {
     myCells: Set<Cell>;
     oppCells: Set<Cell>;
     map: CellMap;
+    visited: Set<Cell>;
   };
   type GetValidActionsParams = {
     validDirections: Direction[];

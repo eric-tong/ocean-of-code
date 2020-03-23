@@ -35,6 +35,21 @@ export function getCellsWithinRange(origin: Cell, range: number): Set<Cell> {
   return visited;
 }
 
+export function getGraphSize(origin: Cell, untraversableCells: Set<Cell>) {
+  const visited = new Set<Cell>();
+  const queue = [...origin];
+
+  while (queue.length) {
+    const testCell = queue.shift();
+    if (!testCell || visited.has(testCell) || untraversableCells.has(testCell))
+      continue;
+
+    visited.add(testCell);
+    queue.push(...testCell);
+  }
+  return visited.size;
+}
+
 export function areNeighbors(a: Cell, b: Cell) {
   const coordsA = getCoords(a);
   const coordsB = getCoords(b);

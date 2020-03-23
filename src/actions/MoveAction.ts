@@ -1,7 +1,7 @@
 import { DEVICES, DIRECTIONS, MAX_CHARGE } from "../mechanics/constants";
+import { getGraphSize, getMeanSquaredError } from "../utils/cell-utils";
 
 import SilenceAction from "./SilenceAction";
-import { getMeanSquaredError } from "../utils/cell-utils";
 import { uniqueSectors } from "../mechanics/sectors";
 
 export default class MoveAction implements Action {
@@ -24,7 +24,7 @@ export default class MoveAction implements Action {
     return new MoveAction(direction, charge);
   }
 
-  getErrors({ myCell, myCells, oppCells, map }: GetErrorsParams): Errors {
+  getErrors({ myCell, myCells, oppCells, visited }: GetErrorsParams): Errors {
     const currentMse = getMeanSquaredError(
       myCell,
       Array.from(oppCells.values())
@@ -36,12 +36,14 @@ export default class MoveAction implements Action {
     const testCell = myCell[directionIndex];
     if (!testCell) throw new Error("Invalid test cell");
     const mse = getMeanSquaredError(testCell, Array.from(oppCells.values()));
+    const futureMovement = getGraphSize(testCell, visited);
     const errors = {
       mse,
       mseGain: mse - currentMse,
       oppKnowledgeGain,
       myKnowledgeLoss: 0,
-      oppHealth: 0
+      oppHealth: 0,
+      futureMovement
     };
     switch (this.charge) {
       case "TORPEDO":
