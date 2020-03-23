@@ -109,6 +109,8 @@ while (true) {
   });
 
   console.error("OPPCELLS", Array.from(oppCells).map(getCoords));
+  console.error("MYCELLS", Array.from(myCells).map(getCoords));
+
   if (!oppCells.size) throw new Error("Lost opponent position");
 
   const validDirections = getValidDirections(myCell, record.visited);

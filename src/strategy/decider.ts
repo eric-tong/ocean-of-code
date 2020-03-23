@@ -54,7 +54,7 @@ function getTotalError(
     myDamage = 0,
     oppKnowledgeGain = 0,
     myKnowledgeLoss = 0,
-    futureMovement = 0
+    futureMovement = Number.POSITIVE_INFINITY
   }: Errors,
   { myCells, oppCells, oppLife, myLife }: Params
 ) {
@@ -66,7 +66,7 @@ function getTotalError(
     MAX_LIFE - oppLife + 1 + (oppCells.size < 5 ? 10 : 0);
   const myHealthMultiplier = MAX_LIFE - myLife + 1;
 
-  const futureMovementError = futureMovement < 10 ? 50 - futureMovement * 5 : 0;
+  const futureMovementError = 20 / futureMovement;
   return (
     idealMseError +
     mseGain +
